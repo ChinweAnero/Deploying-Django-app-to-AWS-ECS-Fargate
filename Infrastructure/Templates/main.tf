@@ -19,3 +19,18 @@ module "VPC" {
   vpc_cidr_block = var.V_cidr_block
 
 }
+
+module "alb_frontend_Security_group" {
+  source = "../Modules/Security_Group"
+  vpc_id         = module.VPC.vpc_id
+  ingress_cidr_block = ["0.0.0.0/0"]
+  ingress_port = 80
+
+
+}
+module "alb_backend_Security_group" {
+  source = "../Modules/Security_Group"
+  vpc_id         = module.VPC.vpc_id
+  ingress_cidr_block = ["0.0.0.0/0"]
+  ingress_port = 443
+}
