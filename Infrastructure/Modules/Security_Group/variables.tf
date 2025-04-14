@@ -3,6 +3,12 @@ variable "vpc_id" {
   description = "ID of the vpc"
 }
 
+variable "name" {
+  type = string
+  description = "security group name"
+  default = null
+}
+
 variable "ingress_port" {
   type = number
   default = 0
