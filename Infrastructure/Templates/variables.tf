@@ -10,5 +10,11 @@ variable "environment" {
     condition = length(var.environment) < 20
     error_message = "name must be less than 20 characters"
   }
+  default = "prod"
 
+}
+variable "server_port" {
+  type = number
+  default = 3001
+  description = "port used by the server"
 }
