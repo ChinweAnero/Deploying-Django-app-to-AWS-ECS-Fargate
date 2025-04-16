@@ -18,3 +18,8 @@ variable "server_port" {
   default = 3001
   description = "port used by the server"
 }
+variable "s3_bucket_name" {
+  type = string
+  description = "name of the s3 bucket"
+  default = ""
+}

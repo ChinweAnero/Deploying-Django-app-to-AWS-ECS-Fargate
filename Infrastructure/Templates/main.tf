@@ -108,3 +108,18 @@ module "App_load_balancer_client" {
   vpc_id = module.VPC.vpc_id
 
 }
+
+#****************creating the s3 bucket**********************************#
+module "s3" {
+  source = "../Modules/S3"
+  bucket_name = var.s3_bucket_name
+}
+#********************ecr for frontend and backend docker images*************#
+module "frontend_ecr" {
+  source = "../Modules/ECR"
+  erc_name = "frontend-ecr-repo"
+}
+module "backend" {
+  source = "../Modules/ECR"
+  erc_name = "backend-ecr-repo"
+}
