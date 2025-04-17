@@ -123,3 +123,5 @@ module "backend" {
   source = "../Modules/ECR"
   erc_name = "backend-ecr-repo"
 }
+
+#*********************creating ecs role***************************************#
