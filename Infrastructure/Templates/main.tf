@@ -186,3 +186,25 @@ module "frontend_ecs_task_definition" {
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
 }
+
+#*******************security group for ecs tasks*****************************#
+module "backend_ecs_security_group" {
+  source = "../Modules/Security_Group"
+  name = "backend-ecs-secgroup-${var.environment}"
+  vpc_id = module.VPC.vpc_id
+  security_group = [module.alb_backend_Security_group.security_group_id]
+  ingress_port = var.backend_port
+}
+module "frontend_ecs_security_group" {
+  source = "../Modules/Security_Group"
+  name = "frontend-ecs-secgroup-${var.environment}"
+  vpc_id = module.VPC.vpc_id
+  security_group = [module.alb_frontend_Security_group.security_group_id]
+  ingress_port = var.frontend_port
+}
+
+#*************ecs cluster**************************************************#
+module "cluster_ecs" {
+  source = "../Modules/ECS/Cluster"
+  cluster_name = "${var.environment}-cluster"
+}
