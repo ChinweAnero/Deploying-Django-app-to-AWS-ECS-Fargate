@@ -23,3 +23,16 @@ variable "s3_bucket_name" {
   description = "name of the s3 bucket"
   default = ""
 }
+variable "iam_role_name" {
+  type = string
+  description = "name of iam role"
+  default = "App"
+}
+variable "hash_k" {
+  type = string
+  default = "id"
+}
+variable "range" {
+  type = string
+  default = ""
+}

@@ -1,7 +1,7 @@
 
 #*******************IAM Roles*******************************************#
 resource "aws_iam_role" "iam_role_ecs_task_execution" {
-  name = var.ecs_exec_role_name
+  name = var.name_
   count = var.create_ecs_role == true ? 1 : 0
   assume_role_policy = <<EOF
 {
