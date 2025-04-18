@@ -123,5 +123,25 @@ module "backend" {
   source = "../Modules/ECR"
   erc_name = "backend-ecr-repo"
 }
+#*******************************dynamodb**************************************#
+module "dynamodb_table" {
+  source = "../Modules/DynamoDB"
+  name = "Artifacts_table-${var.environment}"
+
+  hash_key  = var.hash_k
+  range_key = var.range
+
+}
 
 #*********************creating ecs role***************************************#
+module "role_for_ecs" {
+  source = "../Modules/IAM_Roles"
+  dynamo_db = [module.dynamodb_table.dynamodb_arn]
+  ecs_task_role_name = "ecs-task-${var.iam_role_name}"
+  name_ = "ecs-name-${var.iam_role_name}"
+  create_ecs_role = true
+  attach_with_role = ""
+  codedeploy_role_name = ""
+  pipeline_role_name = ""
+  #s3_assets = ""
+}

@@ -1,8 +1,9 @@
 
-variable "ecs_exec_role_name" {
-  type = string
-  description = "name of the ecs task"
-}
+# variable "ecs_exec_role_name" {
+#   type = string
+#   description = "name of the ecs task"
+#   default = null
+# }
 variable "create_ecs_role" {
   type = bool
   default = false
@@ -57,12 +58,15 @@ variable "ecr_repo" {
   default = ["*"]
 }
 variable "s3_assets" {
-  type = string
+  type = list(string)
   description = "s3 for storing ecs assets"
+  default = ["*"]
+
 }
 variable "dynamo_db" {
-  type = string
+  type = list(string)
   description = "dynamodb table for strong artifacts"
+  default = ["*"]
 }
 variable "attach_with_role" {
   type = string
