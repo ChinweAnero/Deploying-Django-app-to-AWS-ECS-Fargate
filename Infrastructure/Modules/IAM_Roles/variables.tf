@@ -72,3 +72,8 @@ variable "attach_with_role" {
   type = string
   description = "policy arn"
 }
+variable "create_ecs_policy" {
+  type = bool
+  default = false
+  description = "determines if policy is created"
+}

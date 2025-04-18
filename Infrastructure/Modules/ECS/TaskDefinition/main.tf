@@ -8,6 +8,7 @@ resource "aws_ecs_task_definition" "task_service" {
   execution_role_arn = var.execution_role_arn
   task_role_arn      = var.task_role_arn
 
+
   container_definitions = <<TASK_DEFINITION
     [
        {
@@ -27,11 +28,12 @@ resource "aws_ecs_task_definition" "task_service" {
         "networkMode": "awsvpc",
         "portMappings": [
           {
-            "containerPort": "${var.containerPort}",
-            "hostPort": "${var.hostPort}"
+            "containerPort": ${var.containerPort},
+            "hostPort": ${var.hostPort}
           }
+          ]
+        }
 
-      }
     ]
 TASK_DEFINITION
 }

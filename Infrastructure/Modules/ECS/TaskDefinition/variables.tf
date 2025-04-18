@@ -36,10 +36,11 @@ variable "name_of_container" {
 
 }
 variable "containerPort" {
-  type = string
+  type = number
   description = "container port"
 }
 variable "hostPort" {
-  type = string
+  type = number
   description = "hostport"
+
 }
