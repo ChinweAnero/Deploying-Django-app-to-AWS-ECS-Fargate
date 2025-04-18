@@ -36,3 +36,27 @@ variable "range" {
   type = string
   default = ""
 }
+variable "aws_region" {
+  type = string
+  description = "aws region"
+  default = "eu-west-2"
+
+}
+variable "container_name_backend" {
+  type = string
+  default = "Backend-container"
+}
+variable "container_name_frontend" {
+  type = string
+  default = "frontend-container"
+}
+variable "backend_port" {
+  type = number
+  default = 3001
+  description = "backend port"
+}
+variable "frontend_port" {
+  type = number
+  default = 80
+  description = "frontend-port"
+}

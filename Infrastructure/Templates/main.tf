@@ -143,5 +143,46 @@ module "role_for_ecs" {
   attach_with_role = ""
   codedeploy_role_name = ""
   pipeline_role_name = ""
-  #s3_assets = ""
+
+}
+
+#***************************iam policy****************************************#
+module "policy_for_ecs_role" {
+  source = "../Modules/IAM_Roles"
+  name_ = "ecs-policy-${var.environment}"
+  attach_with_role = module.role_for_ecs.ecs_name_
+  codedeploy_role_name = ""
+  ecs_task_role_name = ""
+  pipeline_role_name = ""
+  create_ecs_policy = true
+}
+
+#********************************task definition**********************************#
+module "backend_ecs_task_definition" {
+  source = "../Modules/ECS/TaskDefinition"
+  containerPort = var.backend_port
+  cpu = 256
+  execution_role_arn = module.role_for_ecs.role_arn
+  family = "ECS-FAMILY"
+  hostPort = var.backend_port
+  image = "nginx:latest"
+  memory = "512"
+  name = "backend-taskdef-${var.environment}"
+  name_of_container = var.container_name_backend
+  region = var.aws_region
+  task_role_arn = module.role_for_ecs.ecs_task_role_arn
+}
+module "frontend_ecs_task_definition" {
+  source = "../Modules/ECS/TaskDefinition"
+  containerPort = var.frontend_port
+  image = "nginx:latest"
+  cpu = 256
+  execution_role_arn = module.role_for_ecs.role_arn
+  family = "ECS-FAMILY"
+  hostPort = var.frontend_port
+  memory = "512"
+  name = "frontend-taskdef-${var.environment}"
+  name_of_container = var.container_name_frontend
+  region = var.aws_region
+  task_role_arn = module.role_for_ecs.ecs_task_role_arn
 }
