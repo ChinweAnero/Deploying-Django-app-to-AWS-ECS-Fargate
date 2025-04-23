@@ -208,3 +208,55 @@ module "cluster_ecs" {
   source = "../Modules/ECS/Cluster"
   cluster_name = "${var.environment}-cluster"
 }
+
+#************************ecs services*************************************#
+module "backend_ecs_service" {
+  source = "../Modules/ECS/Service"
+  cluster_id      = module.cluster_ecs.cluster_id
+  container_name  = var.container_name_backend
+  container_port  = var.backend_port
+  desired_count   = 1
+  name            = "${var.environment}-backend"
+  security_groups = module.alb_backend_Security_group.security_group_id
+  subnets = [module.VPC.private_subnet_backend_[0], module.VPC.private_subnet_backend_[1]]
+  taskdef         = module.backend_ecs_task_definition.taskDef_arn
+  depends_on = [module.App_load_balancer_server]
+
+  alb_arn = module.server_target_group_blue.target_group_arn
+
+
+
+}
+module "frontend_ecs_service" {
+  source = "../Modules/ECS/Service"
+  cluster_id      = module.cluster_ecs.cluster_id
+  container_name  = var.container_name_frontend
+  container_port  = var.frontend_port
+  desired_count   = 1
+  name            = "${var.environment}-frontend"
+  security_groups = module.alb_frontend_Security_group.security_group_id
+  subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
+  taskdef         = module.frontend_ecs_task_definition.taskDef_arn
+  depends_on = [module.App_load_balancer_client]
+
+  alb_arn         = module.target_group_client_blue.target_group_arn
+}
+
+#********************************Autoscaling policies for ecs *********************************************#
+module "backend_autoscaling" {
+  source = "../Modules/ECS/Autoscaling_Group"
+  max_capacity    = 3
+  min_capacity    = 1
+  name            = "${var.environment}-backend"
+  name_of_cluster = module.cluster_ecs.name_of_cluster
+  depends_on = [module.backend_ecs_service]
+
+}
+module "frontend_autoscaling" {
+  source = "../Modules/ECS/Autoscaling_Group"
+  max_capacity = 3
+  min_capacity = 1
+  name = "${var.environment}-frontend"
+  name_of_cluster = module.cluster_ecs.name_of_cluster
+  depends_on = [module.frontend_ecs_service]
+}

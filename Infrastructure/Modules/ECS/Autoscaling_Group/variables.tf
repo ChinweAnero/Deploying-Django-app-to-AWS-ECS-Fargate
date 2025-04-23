@@ -8,7 +8,7 @@ variable "min_capacity" {
 }
 variable "name" {
   type = string
-  description = "name of the resource"
+  description = "name of the service"
 }
 variable "name_of_cluster" {
   type = string
