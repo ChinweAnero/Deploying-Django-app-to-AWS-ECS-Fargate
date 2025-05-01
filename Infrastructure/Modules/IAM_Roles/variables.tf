@@ -21,6 +21,7 @@ variable "create_pipeline_role" {
 variable "pipeline_role_name" {
   type = string
   description = "name of the pipeline role"
+
 }
 variable "create_role_for_codedeploy" {
   type = bool

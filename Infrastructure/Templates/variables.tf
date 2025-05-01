@@ -60,3 +60,32 @@ variable "frontend_port" {
   default = 80
   description = "frontend-port"
 }
+variable "iam_for_cicd" {
+  type = map(string)
+  default = {
+    pipeline = "pipeline_role"
+    ecs = "ecs_task_exec_role"
+    ecs_task_role = "ecs_task_role"
+    codedeploy_role = "CodeDeploy_role"
+  }
+}
+variable "build_spec" {
+  type = string
+  default     = "./Infrastructure/Templates/buildspec.yml"
+  description = "build path"
+}
+variable "folder_path_backend" {
+  type = string
+  default = "./Code/backend"
+  description = "where application frontend files are stored"
+}
+variable "folder_path_frontend" {
+  type = string
+  default = "./Code/frontend"
+  description = "where application frontend files are stored"
+}
+variable "trigger_name" {
+  type = string
+  default = "Trigger-group-eu-west2-instances-start"
+  description = "code deploy trigger name"
+}

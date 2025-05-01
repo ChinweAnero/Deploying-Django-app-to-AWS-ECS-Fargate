@@ -60,10 +60,6 @@ resource "aws_codebuild_project" "codebuild" {
       value = var.folder_path
     }
 
-    environment_variable {
-      name  = "PATH_TO_FOLDER"
-      value = var.folder_path
-    }
 
     environment_variable {
       name  = "ECS_ROLE"

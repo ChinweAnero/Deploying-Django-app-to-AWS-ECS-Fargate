@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.3"
+    }
   }
 }
 
@@ -119,7 +123,7 @@ module "frontend_ecr" {
   source = "../Modules/ECR"
   erc_name = "frontend-ecr-repo"
 }
-module "backend" {
+module "backend_ecr" {
   source = "../Modules/ECR"
   erc_name = "backend-ecr-repo"
 }
@@ -259,4 +263,126 @@ module "frontend_autoscaling" {
   name = "${var.environment}-frontend"
   name_of_cluster = module.cluster_ecs.name_of_cluster
   depends_on = [module.frontend_ecs_service]
+}
+
+#************************configuring ci/cd pipeline*********************************************************#
+### s3 bucket for codepipeline###
+resource "random_id" "random" {
+  byte_length = 8
+}
+module "s3_codepipeline" {
+  source = "../Modules/S3"
+  bucket_name = "bucket-for-codepipeline-${random_id.random.hex}"
+}
+
+#### IAM role for codepipeline######
+module "pipeline_role" {
+  source = "../Modules/IAM_Roles"
+  name_ = var.iam_for_cicd["pipeline"]
+  create_pipeline_role = true
+
+  attach_with_role     = ""
+  codedeploy_role_name = ""
+  ecs_task_role_name   = ""
+  pipeline_role_name   = var.iam_for_cicd["pipeline"]
+}
+
+module "codedeploy_iam_role" {
+  source = "../Modules/IAM_Roles"
+  create_role_for_codedeploy = true
+  name_ = var.iam_for_cicd["codedeploy_role"]
+  attach_with_role = ""
+  codedeploy_role_name = var.iam_for_cicd["codedeploy_role"]
+  ecs_task_role_name = ""
+  pipeline_role_name = var.iam_for_cicd["codedeploy_role"]
+
+}
+
+## iam role policy#####
+module "policy_for_pipeline_role" {
+  source = "../Modules/IAM_Roles"
+  name_ = "pipeline-${var.environment}"
+  create_pipeline_policy = true
+  attach_with_role = module.pipeline_role.ecs_name_
+  create_ecs_policy = true
+  ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn]
+  codebuild_projects = [module.codebuild_backend.project_arn, module.codebuild_frontend.project_arn]
+  code_deploy_projects = [module.codedeploy_backend.application_arn, module.codedeploy_backend.deployment_group_arn, module.codedeploy_frontend.application_arn, module.codedeploy_frontend.deployment_group_arn]
+  codedeploy_role_name = ""
+  ecs_task_role_name = ""
+  pipeline_role_name = ""
+}
+
+## aws caller identity###
+data "aws_caller_identity" "current" {}
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+
+## Codebuild projects#####
+module "codebuild_backend" {
+  source = "../Modules/CodeBuild"
+  aws_account_id         = data.aws_caller_identity.current.account_id
+  backend_lb_url         = ""
+  build_spec             = var.build_spec
+  container_name         = var.container_name_backend
+  dynamodb_table         = module.dynamodb_table.dynamodb_name
+  ecs_role               = var.iam_for_cicd["ecs"]
+  ecs_task_role          = var.iam_for_cicd["ecs_task_role"]
+  folder_path            = var.folder_path_backend
+  name                   = "codebuild-backend-${var.environment}"
+  region_aws             = var.aws_region
+  repo_url               = module.backend_ecr.ecr_repo_url
+  service_port           = var.backend_port
+  service_role_arn       = module.pipeline_role.role_arn
+  task_definition_family = module.backend_ecs_task_definition.taskDef_family
+
+}
+module "codebuild_frontend" {
+  source = "../Modules/CodeBuild"
+  aws_account_id = data.aws_caller_identity.current.account_id
+  backend_lb_url = module.App_load_balancer_server.load_balancer_dns
+  build_spec = var.build_spec
+  container_name = var.container_name_frontend
+  dynamodb_table = ""
+  ecs_role = var.iam_for_cicd["ecs"]
+  ecs_task_role = ""
+  folder_path = var.folder_path_frontend
+  name = "codebuild-frontend-${var.environment}"
+  region_aws = var.aws_region
+  repo_url = module.frontend_ecr.ecr_repo_url
+  service_port = var.frontend_port
+  service_role_arn = module.pipeline_role.role_arn
+  task_definition_family = module.frontend_ecs_task_definition.taskDef_family
+}
+## codedeploy projects###
+module "codedeploy_backend" {
+  source = "../Modules/CodeDeploy"
+  aws_lb_listener    = module.App_load_balancer_server.listener_arn
+  blue_target_group  = module.server_target_group_blue.target_group_name
+  cluster_name       = module.cluster_ecs.name_of_cluster
+  green_target_group = module.server_target_group_green.target_group_name
+  name               = "sever-codedeploy-${var.environment}"
+  service_name       = module.backend_ecs_service.ecs_name
+  service_role_arn   = module.codedeploy_iam_role.codedeploy_arn
+  sns_topic_arn      = module.sns_topic.sns_arn
+  trigger_name       = var.trigger_name
+}
+module "codedeploy_frontend" {
+  source = "../Modules/CodeDeploy"
+  aws_lb_listener = module.App_load_balancer_client.listener_arn
+  blue_target_group = module.target_group_client_blue.target_group_name
+  cluster_name = module.cluster_ecs.name_of_cluster
+  green_target_group = module.target_group_client_green.target_group_name
+  name = "client-codedeploy-${var.environment}"
+  service_name = module.frontend_ecs_service.ecs_name
+  service_role_arn = module.codedeploy_iam_role.codedeploy_arn
+  sns_topic_arn = module.sns_topic.sns_arn
+  trigger_name = var.trigger_name
+}
+
+#**************sns topic**********************#
+module "sns_topic" {
+  source = "../Modules/SNS"
+  name_sns = "notifications-${var.environment}"
 }
