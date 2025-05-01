@@ -46,10 +46,6 @@ resource "aws_codepipeline" "codepipeline" {
         ProjectName = var.ProjectName_backend
       }
     }
-  }
-
-    stage {
-    name = "Build"
 
     action {
       name             = "Build_frontend"
@@ -70,7 +66,7 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Deploy"
 
     action {
-      name     = "Deploy_frontend"
+      name     = "Deploy_backend"
       category = "Deploy"
       owner    = "AWS"
       provider = "CodeDeployToECS"
@@ -81,16 +77,12 @@ resource "aws_codepipeline" "codepipeline" {
         TaskDefinitionTemplatePath     = "taskdef.json"
         AppSpecTemplateArtifact        = "BuildArtifact_backend"
         AppSpecTemplatePath            = "appspec.yaml"
-        AppName                = var.AppName_Backend
+        ApplicationName                = var.AppName_Backend
         DeploymentGroupName            = var.DeploymentGroup_backend
         TaskDefinitionTemplateArtifact = "BuildArtifact_backend"
 
       }
     }
-  }
-
-    stage {
-    name = "Deploy"
 
     action {
       name            = "Deploy_frontend"
@@ -104,7 +96,7 @@ resource "aws_codepipeline" "codepipeline" {
        TaskDefinitionTemplatePath     = "taskdef.json"
         AppSpecTemplateArtifact        = "BuildArtifact_frontend"
         AppSpecTemplatePath            = "appspec.yaml"
-        AppName                = var.AppName_frontend
+        ApplicationName              = var.AppName_frontend
         DeploymentGroupName            = var.DeploymentGroup_frontend
         TaskDefinitionTemplateArtifact = "BuildArtifact_frontend"
       }

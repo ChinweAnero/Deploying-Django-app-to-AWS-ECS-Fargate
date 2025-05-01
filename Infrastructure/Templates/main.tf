@@ -386,3 +386,29 @@ module "sns_topic" {
   source = "../Modules/SNS"
   name_sns = "notifications-${var.environment}"
 }
+
+### s3 for backend assets#####
+module "s3_for_backend" {
+  source = "../Modules/S3"
+  bucket_name = "bucket-for-backend-${random_id.random.hex}"
+}
+
+#****************codepipeline
+module "codepipeline" {
+  source = "../Modules/CodePipline"
+  AppName_Backend = module.codedeploy_backend.app_name
+  AppName_frontend = module.codedeploy_frontend.app_name
+  Branch = var.repo_branch
+  DeploymentGroup_backend = module.codedeploy_backend.deployment_group_name
+  DeploymentGroup_frontend = module.codedeploy_frontend.deployment_group_name
+  Owner = var.Owner
+  ProjectName_backend = module.codebuild_backend.project_id
+  ProjectName_frontend = module.codebuild_frontend.project_id
+  Repository = var.Repository
+  code_pipeline_role_arn = module.pipeline_role.role_arn
+  name = "pipeline-${var.environment}"
+  oauth_github_token = var.github-token
+  s3_bucket_for_codepipelineartifacts = module.s3_for_backend.bucket_id
+
+  depends_on = [module.policy_for_pipeline_role]
+}
