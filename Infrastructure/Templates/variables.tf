@@ -89,3 +89,25 @@ variable "trigger_name" {
   default = "Trigger-group-eu-west2-instances-start"
   description = "code deploy trigger name"
 }
+variable "github-token" {
+  type = string
+  sensitive = true
+  description = "token used for github authentication"
+  default = "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"
+
+}
+variable "Repository" {
+  type = string
+  description = "repo name"
+  default = "https://github.com/ChinweAnero/Deploy_App_in_AWS"
+}
+variable "Owner" {
+  type = string
+  description = "repo owner"
+  default = "Chinwe"
+}
+variable "repo_branch" {
+  type = string
+  description = "branch for pipeline to use"
+  default = "Main"
+}
