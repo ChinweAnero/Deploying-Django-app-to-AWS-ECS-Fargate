@@ -11,6 +11,7 @@ resource "aws_codedeploy_deployment_group" "deployment-group" {
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
   deployment_group_name  = "deployment-group-${var.name}"
   service_role_arn       = var.service_role_arn
+  
 
   auto_rollback_configuration {
     enabled = true

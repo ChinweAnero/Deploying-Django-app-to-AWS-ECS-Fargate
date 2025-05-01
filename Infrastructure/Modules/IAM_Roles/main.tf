@@ -107,7 +107,7 @@ EOF
 resource "aws_iam_policy" "pipeline_role_policy" {
   count = var.create_pipeline_policy == true ? 1 : 0
   name = "Role-policy-${var.name_}"
-  policy = data.aws_iam_policy_document.role_policy_pipeline_role
+  policy = data.aws_iam_policy_document.role_policy_pipeline_role.json
   lifecycle {
     create_before_destroy = true
   }
@@ -143,7 +143,7 @@ resource "aws_iam_role_policy_attachment" "attach_ecs_exec_role" {
 }
 resource "aws_iam_role_policy_attachment" "attach_role" {
   count = var.create_pipeline_policy == true ? 1 : 0
-  policy_arn = aws_iam_policy.pipeline_role_policy
+  policy_arn = aws_iam_policy.pipeline_role_policy[0].arn
   role       = var.attach_with_role
   lifecycle {
     create_before_destroy = true
