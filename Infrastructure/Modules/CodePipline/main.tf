@@ -14,17 +14,16 @@ resource "aws_codepipeline" "codepipeline" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["SourceArtifact"]
 
       configuration = {
-        Repo             = var.Repository
-        Owner            = var.Owner
-        Branch           = var.Branch
-        PollForSourceChanges = true
-        OAuthToken = var.oauth_github_token
+        FullRepositoryId = var.Repository
+        BranchName           = var.Branch
+        DetectChanges = true
+        ConnectionArn = var.connection_arn
       }
     }
 

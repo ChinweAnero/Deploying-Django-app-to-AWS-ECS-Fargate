@@ -14,18 +14,14 @@ variable "Repository" {
   type = string
   description = "app repository"
 }
-variable "Owner" {
-  type = string
-  description = "owner"
-}
+
 variable "Branch" {
   type = string
   description = "repo branch to use"
 }
-
-variable "oauth_github_token" {
+variable "connection_arn" {
   type = string
-  description = "github token"
+  description = "code star github connection"
 }
 
 variable "ProjectName_backend" {
