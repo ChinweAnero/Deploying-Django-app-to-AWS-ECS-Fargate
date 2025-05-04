@@ -2,6 +2,7 @@ version: 0.2
 
 env:
   variables:
+    AWS_REGION: eu-west-2
     REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
     IMAGE_TAG: latest
 
@@ -10,12 +11,12 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPO_URL
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URL
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t $REPO_URI:$IMAGE_TAG .
+      - docker build -t $REPO_URL:$IMAGE_TAG .
       - docker tag $REPO_URL:$IMAGE_TAG $REPO_URL:latest
   post_build:
     commands:
