@@ -42,4 +42,4 @@ def current_weather(request):
 
     return render(request, "weather/WeatherApp.html", context)
 
-    #Testing webhook codepipeline
+
