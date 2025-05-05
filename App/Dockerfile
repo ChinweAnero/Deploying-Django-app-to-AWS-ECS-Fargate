@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-COPY App/requirements.txt .
+COPY requirements.txt/app/ .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . /app/
