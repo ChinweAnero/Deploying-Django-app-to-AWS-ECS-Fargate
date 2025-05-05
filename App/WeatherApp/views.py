@@ -41,3 +41,5 @@ def current_weather(request):
     context["icon"] = ICON_MAP.get(current["weathercode"], "❓")
 
     return render(request, "weather/WeatherApp.html", context)
+
+    #Testing webhook codepipeline
