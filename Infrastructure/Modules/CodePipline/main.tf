@@ -22,7 +22,7 @@ resource "aws_codepipeline" "codepipeline" {
       configuration = {
         FullRepositoryId = var.Repository
         BranchName           = var.Branch
-        DetectChanges = true
+        DetectChanges = "true"
         ConnectionArn = var.connection_arn
       }
     }
