@@ -17,7 +17,7 @@ resource "aws_codepipeline" "codepipeline" {
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
       version          = "1"
-      output_artifacts = ["SourceArtifact"]
+      output_artifacts = ["SourceOutput"]
 
       configuration = {
         FullRepositoryId = var.Repository
@@ -37,7 +37,7 @@ resource "aws_codepipeline" "codepipeline" {
       category = "Build"
       owner    = "AWS"
       provider = "CodeBuild"
-      input_artifacts = ["SourceArtifact"]
+      input_artifacts = ["SourceOutput"]
       output_artifacts = ["BuildArtifact_backend"]
       version  = "1"
 
@@ -51,7 +51,7 @@ resource "aws_codepipeline" "codepipeline" {
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
-      input_artifacts  = ["SourceArtifact"]
+      input_artifacts  = ["SourceOutput"]
       output_artifacts = ["BuildArtifact_frontend"]
       version          = "1"
 
