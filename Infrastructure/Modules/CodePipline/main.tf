@@ -73,9 +73,9 @@ resource "aws_codepipeline" "codepipeline" {
       version  = "1"
 
       configuration = {
-        TaskDefinitionTemplatePath     = "taskdef.json"
+        TaskDefinitionTemplatePath     = "App/taskdef.json"
         AppSpecTemplateArtifact        = "BuildArtifact_backend"
-        AppSpecTemplatePath            = "appspec.yaml"
+        AppSpecTemplatePath            = "App/appspec.yml"
         ApplicationName                = var.AppName_Backend
         DeploymentGroupName            = var.DeploymentGroup_backend
         TaskDefinitionTemplateArtifact = "BuildArtifact_backend"
@@ -92,9 +92,9 @@ resource "aws_codepipeline" "codepipeline" {
       version         = "1"
 
       configuration = {
-       TaskDefinitionTemplatePath     = "taskdef.json"
+       TaskDefinitionTemplatePath     = "App/taskdef.json"
         AppSpecTemplateArtifact        = "BuildArtifact_frontend"
-        AppSpecTemplatePath            = "appspec.yaml"
+        AppSpecTemplatePath            = "App/appspec.yml"
         ApplicationName              = var.AppName_frontend
         DeploymentGroupName            = var.DeploymentGroup_frontend
         TaskDefinitionTemplateArtifact = "BuildArtifact_frontend"

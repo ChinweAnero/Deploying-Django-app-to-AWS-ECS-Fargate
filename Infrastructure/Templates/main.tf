@@ -169,7 +169,7 @@ module "backend_ecs_task_definition" {
   execution_role_arn = module.role_for_ecs.role_arn
   family = "ECS-FAMILY"
   hostPort = var.backend_port
-  image = "nginx:latest"
+  image = "python:3.12-slim"
   memory = "512"
   name = "backend-taskdef-${var.environment}"
   name_of_container = var.container_name_backend
@@ -179,7 +179,7 @@ module "backend_ecs_task_definition" {
 module "frontend_ecs_task_definition" {
   source = "../Modules/ECS/TaskDefinition"
   containerPort = var.frontend_port
-  image = "nginx:latest"
+  image = "python:3.12-slim"
   cpu = 256
   execution_role_arn = module.role_for_ecs.role_arn
   family = "ECS-FAMILY"
@@ -189,6 +189,7 @@ module "frontend_ecs_task_definition" {
   name_of_container = var.container_name_frontend
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
+
 }
 
 #*******************security group for ecs tasks*****************************#
