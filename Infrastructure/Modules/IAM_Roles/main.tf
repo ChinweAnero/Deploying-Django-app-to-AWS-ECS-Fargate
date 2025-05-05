@@ -201,7 +201,7 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
       "codedeploy:GetDeploymentGroup",
       "codedeploy:RegisterApplicationRevision"
     ]
-    resources = var.code_deploy_projects
+    resources = ["*"]
   }
   statement {
     sid    = "AllowCodeDeployConfigs"
