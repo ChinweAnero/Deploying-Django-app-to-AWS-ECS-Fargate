@@ -68,6 +68,7 @@ resource "aws_iam_role" "pipeline_role" {
           "codebuild.amazonaws.com",
           "codedeploy.amazonaws.com",
           "codepipeline.amazonaws.com"
+
         ]
       },
       "Action": "sts:AssumeRole"
@@ -285,6 +286,17 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
     ]
     resources = ["*"]
   }
+  statement {
+    sid    = "AllowCodeStarConnection"
+    effect = "Allow"
+    actions = [
+      "codestar-connections:UseConnection",
+      "codestar-connections:PassConnection"
+    ]
+    resources = ["*"]
+  }
+
+
 }
 
 data "aws_iam_policy_document" "role_policy_for_ecs_tasks" {
