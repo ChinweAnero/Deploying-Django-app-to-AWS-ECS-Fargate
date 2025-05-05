@@ -71,7 +71,7 @@ variable "iam_for_cicd" {
 }
 variable "build_spec" {
   type = string
-  default     = "./Infrastructure/Templates/buildspec.yml"
+  default     = "buildspec.yml"
   description = "build path"
 }
 variable "folder_path_backend" {
@@ -81,7 +81,7 @@ variable "folder_path_backend" {
 }
 variable "folder_path_frontend" {
   type = string
-  default = "./Code/frontend"
+  default = "App"
   description = "where application frontend files are stored"
 }
 variable "trigger_name" {
@@ -93,7 +93,7 @@ variable "trigger_name" {
 variable "Repository" {
   type = string
   description = "repo name"
-  default = "https://github.com/ChinweAnero/Deploy_App_in_AWS.git"
+  default = "ChinweAnero/Deploy_App_in_AWS"
 }
 
 variable "repo_branch" {
