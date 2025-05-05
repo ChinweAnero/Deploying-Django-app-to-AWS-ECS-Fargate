@@ -93,7 +93,7 @@ variable "trigger_name" {
 variable "Repository" {
   type = string
   description = "repo name"
-  default = "https://github.com/ChinweAnero/Deploy_App_in_AWS"
+  default = "https://github.com/ChinweAnero/Deploy_App_in_AWS.git"
 }
 
 variable "repo_branch" {
