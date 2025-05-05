@@ -13,10 +13,11 @@ phases:
       - aws --version
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URL
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${IMAGE_TAG:-latest}
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t $REPO_URL:$IMAGE_TAG .
+      - docker build -t $REPO_URL:$IMAGE_TAG ./App/Dockerfile
       - docker tag $REPO_URL:$IMAGE_TAG $REPO_URL:latest
   post_build:
     commands:
@@ -24,7 +25,7 @@ phases:
       - docker push $REPO_URL:$IMAGE_TAG
       - docker push $REPO_URL:latest
       - echo Writing image definitions...
-      - printf '[{"name":"my-app-container","imageUri":"%s"}]' $REPO_URL:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"frontend-container","imageUri":"%s"}]' $REPO_URL:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
     - imagedefinitions.json
