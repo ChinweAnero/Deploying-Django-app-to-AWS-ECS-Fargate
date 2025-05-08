@@ -92,7 +92,7 @@ resource "aws_codepipeline" "codepipeline" {
       version         = "1"
 
       configuration = {
-       TaskDefinitionTemplatePath     = "App/taskdef.json"
+        TaskDefinitionTemplatePath     = "App/taskdef.json"
         AppSpecTemplateArtifact        = "BuildArtifact_frontend"
         AppSpecTemplatePath            = "App/appspec.yml"
         ApplicationName              = var.AppName_frontend
