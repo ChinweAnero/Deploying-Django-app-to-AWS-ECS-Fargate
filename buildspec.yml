@@ -5,7 +5,6 @@ env:
     AWS_REGION: eu-west-2
     REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
 
-
 phases:
   pre_build:
     commands:
@@ -15,9 +14,6 @@ phases:
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - export IMAGE_TAG=${IMAGE_TAG:-latest}
       - echo "Using IMAGE_TAG=$IMAGE_TAG"
-
-
-
   build:
     commands:
       - echo Building the Docker image...
@@ -29,7 +25,7 @@ phases:
       - docker push $REPO_URL:$IMAGE_TAG
       - docker push $REPO_URL:latest
       - echo Writing image definitions...
-      - echo "[{\"name\":\"frontend-container\",\"imageUri\":\"${REPO_URL}:${IMAGE_TAG}\"}]" > imagedefinitions.json
+      - echo "[{\"name\":\"frontend-container\",\"imageUri\":\"$REPO_URL:$IMAGE_TAG\"}]" > imagedefinitions.json
       - cat imagedefinitions.json
 
 artifacts:
