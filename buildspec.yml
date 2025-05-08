@@ -4,7 +4,7 @@ env:
   variables:
     AWS_REGION: eu-west-2
     REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
-    IMAGE_TAG: latest
+
 
 phases:
   pre_build:
@@ -13,6 +13,8 @@ phases:
       - aws --version
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URL
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - export IMAGE_TAG=${IMAGE_TAG:-latest}
+      - echo "Using IMAGE_TAG=$IMAGE_TAG"
 
 
 
