@@ -1,11 +1,11 @@
 version: 1
 Resources:
   - TargetService:
-      Type: AWS::ECS::Service
+      Type: 'AWS::ECS::Service'
       Properties:
-        TaskDefinition: "[TASK_DEF_ARN]"
+        TaskDefinition: '[TASK_DEF_ARN]'
         LoadBalancerInfo:
-          ContainerName: "[frontend-container]"
+          ContainerName: '[frontend-container]'
           ContainerPort: 8000
 
 
