@@ -73,7 +73,7 @@ resource "aws_codepipeline" "codepipeline" {
       version  = "1"
 
       configuration = {
-        TaskDefinitionTemplatePath     = "App/taskdef.json"
+        TaskDefinitionTemplatePath     = "taskdef.json"
         AppSpecTemplateArtifact        = "BuildArtifact_backend"
         AppSpecTemplatePath            = "appspec.json"
         ApplicationName                = var.AppName_Backend
@@ -92,7 +92,7 @@ resource "aws_codepipeline" "codepipeline" {
       version         = "1"
 
       configuration = {
-        TaskDefinitionTemplatePath     = "App/taskdef.json"
+        TaskDefinitionTemplatePath     = "taskdef.json"
         AppSpecTemplateArtifact        = "BuildArtifact_frontend"
         AppSpecTemplatePath            = "appspec.json"
         ApplicationName              = var.AppName_frontend
