@@ -9,11 +9,9 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws --version
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URL
-      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - export IMAGE_TAG=${IMAGE_TAG:-latest}
-      - echo "Using IMAGE_TAG=$IMAGE_TAG"
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${IMAGE_TAG:-latest}
   build:
     commands:
       - echo Building the Docker image...
@@ -24,12 +22,12 @@ phases:
       - echo Pushing the Docker image to ECR...
       - docker push $REPO_URL:$IMAGE_TAG
       - docker push $REPO_URL:latest
-      - echo Writing image definitions...
-      - echo "[{\"name\":\"frontend-container\",\"imageUri\":\"$REPO_URL:$IMAGE_TAG\"}]" > imagedefinitions.json
-      - cat imagedefinitions.json
+      - echo Writing task definition...
+      - IMAGE_URI=$REPO_URL:$IMAGE_TAG
+      - sed "s|<IMAGE_URI>|$IMAGE_URI|g" App/taskdef-template.json > App/taskdef.json
+      - cat App/taskdef.json
 
 artifacts:
   files:
-    - imagedefinitions.json
-    - App/appspec.yml
     - App/taskdef.json
+    - App/appspec.yml
