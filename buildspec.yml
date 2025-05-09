@@ -33,7 +33,7 @@ phases:
           --query 'taskDefinition.taskDefinitionArn' \
           --output text)
        echo "TaskDef ARN: $TASK_DEF_ARN"
-      - sed -i "s|TASK_DEF_ARN|$TASK_DEF_ARN|g" App/appspec.yml
+      - sed -i "s|<TASK_DEF_ARN>|$TASK_DEF_ARN|g" App/appspec.yml
 
 artifacts:
   files:
