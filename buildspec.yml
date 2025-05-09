@@ -30,4 +30,4 @@ phases:
 artifacts:
   files:
     - App/taskdef.json
-    - appspec.yml
+    - App/appspec.yml
