@@ -26,6 +26,14 @@ phases:
       - IMAGE_URI=$REPO_URL:$IMAGE_TAG
       - sed "s|<IMAGE_URI>|$IMAGE_URI|g" App/taskdef-template.json > App/taskdef.json
       - cat App/taskdef.json
+      - echo Registering ECS task definition...
+      - |
+       TASK_DEF_ARN=$(aws ecs register-task-definition \
+          --cli-input-json file://App/taskdef-template.json \
+          --query 'taskDefinition.taskDefinitionArn' \
+          --output text)
+       echo "TaskDef ARN: $TASK_DEF_ARN"
+      - sed -i "s|REPLACE_TASK_DEF_ARN|$TASK_DEF_ARN|g" App/appspec.yml
 
 artifacts:
   files:
