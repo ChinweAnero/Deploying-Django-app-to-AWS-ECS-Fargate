@@ -28,7 +28,7 @@ phases:
       - cat taskdef.json
 
       - echo "Registering task definition..."
-      - TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://App/taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
+      - TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
       - echo "Generating appspec.json from template..."
       - sed "s|\[TASK_DEF_ARN\]|$TASK_DEF_ARN|g" App/appspec-template.json > appspec.json
       - echo "appspec.json generated:"
