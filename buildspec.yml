@@ -32,7 +32,7 @@ phases:
           --cli-input-json file://App/taskdef-template.json \
           --query 'taskDefinition.taskDefinitionArn' \
           --output text)
-       cp appspec-template.json appspec.json
+       cp taskdef-template.json appspec.json
       - sed -i "s|\[TASK_DEF_ARN\]|$TASK_DEF_ARN|g" appspec.json
 
 
