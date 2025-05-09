@@ -24,8 +24,8 @@ phases:
       - docker push $REPO_URL:latest
       - echo Writing task definition...
       - export IMAGE_URI=$REPO_URL:$IMAGE_TAG
-      - sed "s|<IMAGE_URI>|$IMAGE_URI|g" App/taskdef-template.json > App/taskdef.json
-      - cat App/taskdef.json
+      - sed "s|<IMAGE_URI>|$IMAGE_URI|g" App/taskdef-template.json > taskdef.json
+      - cat taskdef.json
 
       - echo "Registering task definition..."
       - TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://App/taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
@@ -37,5 +37,5 @@ phases:
 
 artifacts:
   files:
-    - App/taskdef.json
+    - taskdef.json
     - appspec.json
