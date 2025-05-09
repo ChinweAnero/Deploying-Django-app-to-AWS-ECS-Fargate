@@ -3,7 +3,7 @@ Resources:
   - TargetService:
       Type: AWS::ECS::Service
       Properties:
-        TaskDefinition: ""
+        TaskDefinition: "REPLACE_TASK_DEF_ARN"
         LoadBalancerInfo:
           ContainerName: "frontend-container"
           ContainerPort: 8000
