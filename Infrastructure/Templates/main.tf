@@ -45,9 +45,9 @@ module "server_target_group_blue" {
   name = "targetg-${var.environment}-server-blue"
   vpc_id = module.VPC.vpc_id
   target_type = "ip"
-  port = 80
+  port = 8000
   protocol = "HTTP"
-  healthcheck_path = "/status"
+  healthcheck_path = "/health"
   healthcheck_port = var.server_port
   create_target_group = true
 
@@ -58,9 +58,9 @@ module "server_target_group_green" {
   name = "targetg-${var.environment}-server-green"
   vpc_id = module.VPC.vpc_id
   target_type = "ip"
-  port = 80
+  port = 8000
   protocol = "HTTP"
-  healthcheck_path = "/status"
+  healthcheck_path = "/health"
   healthcheck_port = var.server_port
   create_target_group = true
 
@@ -71,10 +71,10 @@ module "target_group_client_blue" {
   name   = "targetg-${var.environment}-client-blue"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
-  port = 80
+  port = 8000
   protocol = "HTTP"
   target_type = "ip"
-  healthcheck_path = "/"
+  healthcheck_path = "/health"
   healthcheck_port = var.server_port
 }
 module "target_group_client_green" {
@@ -82,10 +82,10 @@ module "target_group_client_green" {
   name   = "targetg-${var.environment}-client-green"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
-  port = 80
+  port = 8000
   protocol = "HTTP"
   target_type = "ip"
-  healthcheck_path = "/"
+  healthcheck_path = "/health"
   healthcheck_port = var.server_port
 }
 

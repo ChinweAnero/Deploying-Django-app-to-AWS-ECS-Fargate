@@ -26,7 +26,6 @@ resource "aws_ecs_task_definition" "task_service" {
         "cpu": 0,
         "image": "${var.image}",
         "name": "${var.name_of_container}",
-        "networkMode": "awsvpc",
         "portMappings": [
           {
             "containerPort": ${var.containerPort},
