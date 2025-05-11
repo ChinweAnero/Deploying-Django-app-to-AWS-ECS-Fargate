@@ -2,6 +2,7 @@
 
 from django.shortcuts import render
 import requests
+from django.http import JsonResponse
 
 ICON_MAP = {
     0: "☀️",   # Clear sky
@@ -14,6 +15,8 @@ ICON_MAP = {
     71: "❄️",  # Snow
     95: "⛈️",  # Thunderstorm
 }
+
+
 
 def current_weather(request):
     city = request.GET.get("city", "London")
@@ -42,4 +45,5 @@ def current_weather(request):
 
     return render(request, "weather/WeatherApp.html", context)
 
-
+def health_check(request):
+    return JsonResponse({'status': 'ok'})
