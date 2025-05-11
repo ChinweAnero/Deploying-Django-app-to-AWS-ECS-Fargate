@@ -14,8 +14,8 @@ variable "environment" {
 
 }
 variable "server_port" {
-  type = number
-  default = 3001
+  type = string
+  default = "traffic-port"
   description = "port used by the server"
 }
 variable "s3_bucket_name" {
@@ -52,12 +52,12 @@ variable "container_name_frontend" {
 }
 variable "backend_port" {
   type = number
-  default = 3001
+  default = 8000
   description = "backend port"
 }
 variable "frontend_port" {
   type = number
-  default = 80
+  default = 8000
   description = "frontend-port"
 }
 variable "iam_for_cicd" {

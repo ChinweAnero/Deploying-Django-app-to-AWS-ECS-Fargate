@@ -30,6 +30,7 @@ module "alb_frontend_Security_group" {
   ingress_cidr_block = ["0.0.0.0/0"]
   ingress_port = 80
   name = "alb-${var.environment}-frontend"
+
 }
 module "alb_backend_Security_group" {
   source = "../Modules/Security_Group"
@@ -206,6 +207,7 @@ module "frontend_ecs_security_group" {
   vpc_id = module.VPC.vpc_id
   security_group = [module.alb_frontend_Security_group.security_group_id]
   ingress_port = var.frontend_port
+
 }
 
 #*************ecs cluster**************************************************#

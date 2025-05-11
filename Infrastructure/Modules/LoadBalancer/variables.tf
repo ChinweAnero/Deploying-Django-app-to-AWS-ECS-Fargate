@@ -59,7 +59,7 @@ variable "healthcheck_path" {
   description = "the path of the health check"
 }
 variable "healthcheck_port" {
-  type = number
+  type = string
   description = "health check port"
   default = 80
 }
