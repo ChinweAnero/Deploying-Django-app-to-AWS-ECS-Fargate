@@ -1,4 +1,3 @@
-# Dockerfile
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -13,5 +12,4 @@ COPY . .
 
 ENV DJANGO_SETTINGS_MODULE=App.settings
 
-CMD ["gunicorn", "App.App.wsgi:application", "--bind", "0.0.0.0:8000"]
-
+CMD ["gunicorn", "App.wsgi:application", "--bind", "0.0.0.0:8000"]
