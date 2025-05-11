@@ -10,6 +10,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-ENV DJANGO_SETTINGS_MODULE=App.settings
+ENV DJANGO_SETTINGS_MODULE=App.settings.....
 
 CMD ["gunicorn", "App.wsgi:application", "--bind", "0.0.0.0:8000"]
