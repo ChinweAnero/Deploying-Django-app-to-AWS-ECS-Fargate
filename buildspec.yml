@@ -19,6 +19,21 @@ phases:
       - docker tag $REPO_URL:$IMAGE_TAG $REPO_URL:latest
   post_build:
     commands:
+       # Check for in-progress deployments
+      - DEPLOYMENT_ID=$(aws deploy list-deployments \
+        --application-name "$APP_NAME" \
+        --deployment-group-name "$DEPLOYMENT_GROUP" \
+        --include-only-statuses InProgress \
+        --query "deployments[0]" \
+        --output text)
+
+      - if [ "$DEPLOYMENT_ID" != "None" ]; then
+      - echo "Stopping in-progress deployment: $DEPLOYMENT_ID"
+      - aws deploy stop-deployment --deployment-id "$DEPLOYMENT_ID"
+      - fi
+
+
+
       - echo Pushing the Docker image to ECR...
       - docker push $REPO_URL:$IMAGE_TAG
       - docker push $REPO_URL:latest
