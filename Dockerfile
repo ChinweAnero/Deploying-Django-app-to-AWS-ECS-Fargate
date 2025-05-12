@@ -8,13 +8,12 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY . .
-COPY App/test_django.py ./test_django.py
-RUN python test_django.py
+COPY App .
 
-ENV DJANGO_SETTINGS_MODULE=App/App.settings.py
 
-CMD ["gunicorn", "App.App.wsgi:application", "--bind", "0.0.0.0:8000"]
+ENV DJANGO_SETTINGS_MODULE=App.settings
+
+CMD ["gunicorn", "App.wsgi:application", "--bind", "0.0.0.0:8000"]
 
 RUN echo "Listing /app contents:" && ls -la /app
 
