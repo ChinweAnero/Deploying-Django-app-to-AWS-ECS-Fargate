@@ -12,7 +12,7 @@ COPY . .
 COPY App/test_django.py ./test_django.py
 RUN python test_django.py
 
-ENV DJANGO_SETTINGS_MODULE=App/App.settings
+ENV DJANGO_SETTINGS_MODULE=App/App.settings.py
 
 CMD ["gunicorn", "App.App.wsgi:application", "--bind", "0.0.0.0:8000"]
 
