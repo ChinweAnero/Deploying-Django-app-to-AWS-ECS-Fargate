@@ -15,7 +15,7 @@ ENV DJANGO_SETTINGS_MODULE=App.settings
 
 CMD ["gunicorn", "App.wsgi:application", "--bind", "0.0.0.0:8000"]
 
-RUN echo "Listing /app contents:" && ls -la /app
+
 
 
 #Test1
