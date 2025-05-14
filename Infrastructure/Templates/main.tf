@@ -28,7 +28,7 @@ module "alb_frontend_Security_group" {
   source = "../Modules/Security_Group"
   vpc_id         = module.VPC.vpc_id
   ingress_cidr_block = ["0.0.0.0/0"]
-  ingress_port = 80
+  ingress_port = 8000
   name = "alb-${var.environment}-frontend"
 
 }
@@ -36,7 +36,7 @@ module "alb_backend_Security_group" {
   source = "../Modules/Security_Group"
   vpc_id         = module.VPC.vpc_id
   ingress_cidr_block = ["0.0.0.0/0"]
-  ingress_port = 80
+  ingress_port = 8000
   name = "alb-${var.environment}-backend"
 }
 
@@ -48,7 +48,7 @@ module "server_target_group_blue" {
   target_type = "ip"
   port = 8000
   protocol = "HTTP"
-  healthcheck_path = "/health"
+  healthcheck_path = "/health/"
   healthcheck_port = var.server_port
   create_target_group = true
 
@@ -61,7 +61,7 @@ module "server_target_group_green" {
   target_type = "ip"
   port = 8000
   protocol = "HTTP"
-  healthcheck_path = "/health"
+  healthcheck_path = "/health/"
   healthcheck_port = var.server_port
   create_target_group = true
 
@@ -75,7 +75,7 @@ module "target_group_client_blue" {
   port = 8000
   protocol = "HTTP"
   target_type = "ip"
-  healthcheck_path = "/health"
+  healthcheck_path = "/health/"
   healthcheck_port = var.server_port
 }
 module "target_group_client_green" {
@@ -86,7 +86,7 @@ module "target_group_client_green" {
   port = 8000
   protocol = "HTTP"
   target_type = "ip"
-  healthcheck_path = "/health"
+  healthcheck_path = "/health/"
   healthcheck_port = var.server_port
 }
 

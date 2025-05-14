@@ -37,7 +37,7 @@ variable "enable_https_listener" {
 variable "port" {
   type = number
   description = "the http port number"
-  default = 80
+  default = 8000
 }
 variable "protocol" {
   type = string
@@ -61,7 +61,7 @@ variable "healthcheck_path" {
 variable "healthcheck_port" {
   type = string
   description = "health check port"
-  default = 80
+  default = 8000
 }
 variable "create_target_group" {
   type = bool
