@@ -19,7 +19,7 @@
       "environment": [
         {
           "name": "App_SETTINGS_MODULE",
-          "value": "App.settings"
+          "value": "app.settings"
         }
       ],
       "logConfiguration": {
