@@ -58,13 +58,13 @@ resource "aws_lb_target_group" "ip_target_group" {
 
   health_check {
     enabled             = true
-    interval            = 15
+    interval            = 60
     path                = var.healthcheck_path
     port                = var.healthcheck_port
     protocol            = var.protocol
-    timeout             = 10
+    timeout             = 30
     healthy_threshold   = 2
-    unhealthy_threshold = 3
+    unhealthy_threshold = 5
     matcher             = "200"
   }
   lifecycle {
