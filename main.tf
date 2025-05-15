@@ -54,7 +54,7 @@ module "alb_frontend_sec_group_rule" {
   security_group_id = module.alb_frontend_Security_group.security_group_id
   from_port = 80
   to_port = 80
-  protocol = "HTTP"
+  protocol = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
   type = "ingress"
 }
