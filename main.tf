@@ -46,7 +46,19 @@ module "alb_frontend_Security_group" {
   ingress_port = 8000
   name = "alb-${var.environment}-frontend"
 
+
 }
+
+module "alb_frontend_sec_group_rule" {
+  source = "./Infrastructure/Modules/Security Group Rules"
+  security_group_id = module.alb_frontend_Security_group.security_group_id
+  from_port = 80
+  to_port = 80
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  type = "ingress"
+}
+
 module "alb_backend_Security_group" {
   source = "./Infrastructure/Modules/Security_Group"
   vpc_id         = module.VPC.vpc_id
