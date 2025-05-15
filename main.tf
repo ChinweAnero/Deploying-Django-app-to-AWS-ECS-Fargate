@@ -36,13 +36,13 @@ provider "aws" {
 
 #*******************Network*****************************
 module "VPC" {
-  source = "../Infrastructure/Modules/Network"
+  source = "./Infrastructure/Modules/Network"
   vpc_cidr_block = var.V_cidr_block
   vpc_name = var.environment
 }
 
 module "alb_frontend_Security_group" {
-  source = "../Infrastructure/Modules/Security_Group"
+  source = "./Infrastructure/Modules/Security_Group"
   vpc_id         = module.VPC.vpc_id
   ingress_cidr_block = ["0.0.0.0/0"]
   ingress_port = 8000
@@ -50,7 +50,7 @@ module "alb_frontend_Security_group" {
 
 }
 module "alb_backend_Security_group" {
-  source = "../Infrastructure/Modules/Security_Group"
+  source = "./Infrastructure/Modules/Security_Group"
   vpc_id         = module.VPC.vpc_id
   ingress_cidr_block = ["0.0.0.0/0"]
   ingress_port = 8000
@@ -59,7 +59,7 @@ module "alb_backend_Security_group" {
 
 #*********************configuring target groups for server environments********************************#
 module "server_target_group_blue" {
-  source = "../Infrastructure/Modules/LoadBalancer"
+  source = "./Infrastructure/Modules/LoadBalancer"
   name = "targetg-${var.environment}-server-blue"
   vpc_id = module.VPC.vpc_id
   target_type = "ip"
@@ -72,7 +72,7 @@ module "server_target_group_blue" {
 }
 
 module "server_target_group_green" {
-  source = "../Infrastructure/Modules/LoadBalancer"
+  source = "./Infrastructure/Modules/LoadBalancer"
   name = "targetg-${var.environment}-server-green"
   vpc_id = module.VPC.vpc_id
   target_type = "ip"
@@ -85,7 +85,7 @@ module "server_target_group_green" {
 }
 #*******************************target group for client environments**********************#
 module "target_group_client_blue" {
-  source = "../Infrastructure/Modules/LoadBalancer"
+  source = "./Infrastructure/Modules/LoadBalancer"
   name   = "targetg-${var.environment}-client-blue"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
@@ -96,7 +96,7 @@ module "target_group_client_blue" {
   healthcheck_port = var.server_port
 }
 module "target_group_client_green" {
-  source = "../Infrastructure/Modules/LoadBalancer"
+  source = "./Infrastructure/Modules/LoadBalancer"
   name   = "targetg-${var.environment}-client-green"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
@@ -109,7 +109,7 @@ module "target_group_client_green" {
 
 #****************************configuring load balancer for both client and server**************************#
 module "App_load_balancer_server" {
-  source = "../Infrastructure/Modules/LoadBalancer"
+  source = "./Infrastructure/Modules/LoadBalancer"
   name = "App-lb-${var.environment}-backend"
   create_load_balancer = true
   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
@@ -120,7 +120,7 @@ module "App_load_balancer_server" {
 }
 
 module "App_load_balancer_client" {
-  source = "../Infrastructure/Modules/LoadBalancer"
+  source = "./Infrastructure/Modules/LoadBalancer"
   name = "App-lb-${var.environment}-frontend"
   create_load_balancer = true
   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
@@ -133,21 +133,21 @@ module "App_load_balancer_client" {
 
 #****************creating the s3 bucket**********************************#
 module "s3" {
-  source = "../Infrastructure/Modules/S3"
+  source = "./Infrastructure/Modules/S3"
   bucket_name = var.s3_bucket_name
 }
 #********************ecr for frontend and backend docker images*************#
 module "frontend_ecr" {
-  source = "../Infrastructure/Modules/ECR"
+  source = "./Infrastructure/Modules/ECR"
   erc_name = "frontend-ecr-repo"
 }
 module "backend_ecr" {
-  source = "../Infrastructure/Modules/ECR"
+  source = "./Infrastructure/Modules/ECR"
   erc_name = "backend-ecr-repo"
 }
 #*******************************dynamodb**************************************#
 module "dynamodb_table" {
-  source = "../Infrastructure/Modules/DynamoDB"
+  source = "./Infrastructure/Modules/DynamoDB"
   name = "Artifacts_table-${var.environment}"
 
   hash_key  = var.hash_k
@@ -157,7 +157,7 @@ module "dynamodb_table" {
 
 #*********************creating ecs role***************************************#
 module "role_for_ecs" {
-  source = "../Infrastructure/Modules/IAM_Roles"
+  source = "./Infrastructure/Modules/IAM_Roles"
   dynamo_db = [module.dynamodb_table.dynamodb_arn]
   ecs_task_role_name = "ecs-task-${var.iam_role_name}"
   name_ = "ecs-name-${var.iam_role_name}"
@@ -170,7 +170,7 @@ module "role_for_ecs" {
 
 #***************************iam policy****************************************#
 module "policy_for_ecs_role" {
-  source = "../Infrastructure/Modules/IAM_Roles"
+  source = "./Infrastructure/Modules/IAM_Roles"
   name_ = "ecs-policy-${var.environment}"
   attach_with_role = module.role_for_ecs.ecs_name_
   codedeploy_role_name = ""
@@ -181,7 +181,7 @@ module "policy_for_ecs_role" {
 
 #********************************task definition**********************************#
 module "backend_ecs_task_definition" {
-  source = "../Infrastructure/Modules/ECS/TaskDefinition"
+  source = "./Infrastructure/Modules/ECS/TaskDefinition"
   containerPort = var.backend_port
   cpu = 256
   execution_role_arn = module.role_for_ecs.role_arn
@@ -195,7 +195,7 @@ module "backend_ecs_task_definition" {
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
 }
 module "frontend_ecs_task_definition" {
-  source = "../Infrastructure/Modules/ECS/TaskDefinition"
+  source = "./Infrastructure/Modules/ECS/TaskDefinition"
   containerPort = var.frontend_port
   image = "python:3.12-slim"
   cpu = 256
@@ -212,14 +212,14 @@ module "frontend_ecs_task_definition" {
 
 #*******************security group for ecs tasks*****************************#
 module "backend_ecs_security_group" {
-  source = "../Infrastructure/Modules/Security_Group"
+  source = "./Infrastructure/Modules/Security_Group"
   name = "backend-ecs-secgroup-${var.environment}"
   vpc_id = module.VPC.vpc_id
   security_group = [module.alb_backend_Security_group.security_group_id]
   ingress_port = var.backend_port
 }
 module "frontend_ecs_security_group" {
-  source = "../Infrastructure/Modules/Security_Group"
+  source = "./Infrastructure/Modules/Security_Group"
   name = "frontend-ecs-secgroup-${var.environment}"
   vpc_id = module.VPC.vpc_id
   security_group = [module.alb_frontend_Security_group.security_group_id]
@@ -229,13 +229,13 @@ module "frontend_ecs_security_group" {
 
 #*************ecs cluster**************************************************#
 module "cluster_ecs" {
-  source = "../Infrastructure/Modules/ECS/Cluster"
+  source = "./Infrastructure/Modules/ECS/Cluster"
   cluster_name = "${var.environment}-cluster"
 }
 
 #************************ecs services*************************************#
 module "backend_ecs_service" {
-  source = "../Infrastructure/Modules/ECS/Service"
+  source = "./Infrastructure/Modules/ECS/Service"
   cluster_id      = module.cluster_ecs.cluster_id
   container_name  = var.container_name_backend
   container_port  = var.backend_port
@@ -252,7 +252,7 @@ module "backend_ecs_service" {
 
 }
 module "frontend_ecs_service" {
-  source = "../Infrastructure/Modules/ECS/Service"
+  source = "./Infrastructure/Modules/ECS/Service"
   cluster_id      = module.cluster_ecs.cluster_id
   container_name  = var.container_name_frontend
   container_port  = var.frontend_port
@@ -268,7 +268,7 @@ module "frontend_ecs_service" {
 
 #********************************Autoscaling policies for ecs *********************************************#
 module "backend_autoscaling" {
-  source = "../Infrastructure/Modules/ECS/Autoscaling_Group"
+  source = "./Infrastructure/Modules/ECS/Autoscaling_Group"
   max_capacity    = 3
   min_capacity    = 1
   name            = "${var.environment}-backend"
@@ -277,7 +277,7 @@ module "backend_autoscaling" {
 
 }
 module "frontend_autoscaling" {
-  source = "../Infrastructure/Modules/ECS/Autoscaling_Group"
+  source = "./Infrastructure/Modules/ECS/Autoscaling_Group"
   max_capacity = 3
   min_capacity = 1
   name = "${var.environment}-frontend"
@@ -291,13 +291,13 @@ resource "random_id" "random" {
   byte_length = 8
 }
 module "s3_codepipeline" {
-  source = "../Infrastructure/Modules/S3"
+  source = "./Infrastructure/Modules/S3"
   bucket_name = "bucket-for-codepipeline-${random_id.random.hex}"
 }
 
 #### IAM role for codepipeline######
 module "pipeline_role" {
-  source = "../Infrastructure/Modules/IAM_Roles"
+  source = "./Infrastructure/Modules/IAM_Roles"
   name_ = var.iam_for_cicd["pipeline"]
   create_pipeline_role = true
 
@@ -308,7 +308,7 @@ module "pipeline_role" {
 }
 
 module "codedeploy_iam_role" {
-  source = "../Infrastructure/Modules/IAM_Roles"
+  source = "./Infrastructure/Modules/IAM_Roles"
   create_role_for_codedeploy = true
   name_ = var.iam_for_cicd["codedeploy_role"]
   attach_with_role = ""
@@ -320,7 +320,7 @@ module "codedeploy_iam_role" {
 
 ## iam role policy#####
 module "policy_for_pipeline_role" {
-  source = "../Infrastructure/Modules/IAM_Roles"
+  source = "./Infrastructure/Modules/IAM_Roles"
   name_ = "pipeline-${var.environment}"
   create_pipeline_policy = true
   attach_with_role = module.pipeline_role.ecs_name_
@@ -341,7 +341,7 @@ output "account_id" {
 
 ## Codebuild projects#####
 module "codebuild_backend" {
-  source = "../Infrastructure/Modules/CodeBuild"
+  source = "./Infrastructure/Modules/CodeBuild"
   aws_account_id         = data.aws_caller_identity.current.account_id
   backend_lb_url         = ""
   build_spec             = var.build_spec
@@ -359,7 +359,7 @@ module "codebuild_backend" {
 
 }
 module "codebuild_frontend" {
-  source = "../Infrastructure/Modules/CodeBuild"
+  source = "./Infrastructure/Modules/CodeBuild"
   aws_account_id = data.aws_caller_identity.current.account_id
   backend_lb_url = module.App_load_balancer_server.load_balancer_dns
   build_spec = var.build_spec
@@ -377,7 +377,7 @@ module "codebuild_frontend" {
 }
 ## codedeploy projects###
 module "codedeploy_backend" {
-  source = "../Infrastructure/Modules/CodeDeploy"
+  source = "./Infrastructure/Modules/CodeDeploy"
   aws_lb_listener    = module.App_load_balancer_server.listener_arn
   blue_target_group  = module.server_target_group_blue.target_group_name
   cluster_name       = module.cluster_ecs.name_of_cluster
@@ -389,7 +389,7 @@ module "codedeploy_backend" {
   trigger_name       = var.trigger_name
 }
 module "codedeploy_frontend" {
-  source = "../Infrastructure/Modules/CodeDeploy"
+  source = "./Infrastructure/Modules/CodeDeploy"
   aws_lb_listener = module.App_load_balancer_client.listener_arn
   blue_target_group = module.target_group_client_blue.target_group_name
   cluster_name = module.cluster_ecs.name_of_cluster
@@ -403,24 +403,24 @@ module "codedeploy_frontend" {
 
 #**************sns topic**********************#
 module "sns_topic" {
-  source = "../Infrastructure/Modules/SNS"
+  source = "./Infrastructure/Modules/SNS"
   name_sns = "notifications-${var.environment}"
 }
 
 ### s3 for backend assets#####
 module "s3_for_backend" {
-  source = "../Infrastructure/Modules/S3"
+  source = "./Infrastructure/Modules/S3"
   bucket_name = "bucket-for-backend-${random_id.random.hex}"
 }
 #***********connection to github**************#
 module "codestar_connection_to_github" {
-source = "../Infrastructure/Modules/CodeStar_Connection"
+source = "./Infrastructure/Modules/CodeStar_Connection"
 codestar_name = var.codestar_github_name
 }
 
 #****************codepipeline
 module "codepipeline" {
-  source = "../Infrastructure/Modules/CodePipline"
+  source = "./Infrastructure/Modules/CodePipline"
   AppName_Backend = module.codedeploy_backend.app_name
   AppName_frontend = module.codedeploy_frontend.app_name
   Branch = var.repo_branch
