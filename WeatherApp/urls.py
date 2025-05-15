@@ -12,5 +12,5 @@ from .views import health_check
 
 urlpatterns = [
     path("", health_check),
-    path("weather/", views.current_weather, name="current_weather"),
+    #path("weather/", views.current_weather, name="current_weather"),
 ]
