@@ -31,7 +31,10 @@ terraform {
 # AWS Provider
 provider "aws" {
   region                   = "eu-west-2"
-  shared_credentials_files = ["C:/Users/Chinwe/.aws/credentials"]
+  #shared_credentials_files = ["C:/Users/Chinwe/.aws/credentials"]
+  # access_key = "secrets.AWS_ACCESS_KEY_ID"
+  # secret_key = "secrets.AWS_SECRET_ACCESS_KEY"
+
 }
 
 #*******************Network*****************************
