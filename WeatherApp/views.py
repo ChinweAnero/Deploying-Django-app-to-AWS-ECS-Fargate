@@ -4,6 +4,10 @@ from django.shortcuts import render
 import requests
 from django.http import JsonResponse
 
+def health_check(request):
+    return JsonResponse({'status': 'ok'})
+
+
 ICON_MAP = {
     0: "☀️",   # Clear sky
     1: "🌤️",  # Mainly clear
@@ -45,5 +49,3 @@ def current_weather(request):
 
     return render(request, "weather/WeatherApp.html", context)
 
-def health_check(request):
-    return JsonResponse({'status': 'ok'})
