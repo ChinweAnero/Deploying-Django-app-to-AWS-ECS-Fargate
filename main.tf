@@ -447,5 +447,3 @@ module "codepipeline" {
   connection_arn     = module.codestar_connection_to_github.codestar_arn
 
 }
-
-
