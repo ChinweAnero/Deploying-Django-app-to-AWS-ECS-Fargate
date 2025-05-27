@@ -21,5 +21,4 @@ sqlparse==0.5.3
 tzdata==2025.2
 urllib3==2.3.0
 gunicorn
-django-prometheus
-prometheus-client
+django_prometheus
