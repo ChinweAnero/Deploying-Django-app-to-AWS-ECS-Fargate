@@ -300,7 +300,9 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
+      "ssm:GetParameter",
+      "cloudwatch:PutMetricData"
     ]
     resources = ["*"]
   }
@@ -357,6 +359,18 @@ data "aws_iam_policy_document" "role_policy_for_ecs_tasks" {
       "dynamodb:Scan",
     ]
     resources = var.dynamo_db
+  }
+  statement {
+    sid    = "AllowCloudWatchActions"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "ssm:GetParameter",
+      "cloudwatch:PutMetricData"
+    ]
+    resources = ["*"]
   }
 
 }
