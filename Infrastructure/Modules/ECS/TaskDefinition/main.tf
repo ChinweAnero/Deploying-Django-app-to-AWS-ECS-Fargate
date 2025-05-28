@@ -1,4 +1,9 @@
 
+data "aws_ssm_parameter" "cloudwatch_agent" {
+  name = "cloudwatchAgent"
+  #arn = "arn:aws:ssm:eu-west-2:707798379596:parameter/cloudwatchAgent"
+
+}
 resource "aws_ecs_task_definition" "task_service" {
   family             = var.family
   network_mode       = "awsvpc"
@@ -7,35 +12,40 @@ resource "aws_ecs_task_definition" "task_service" {
   memory             = var.memory
   execution_role_arn = var.execution_role_arn
   task_role_arn      = var.task_role_arn
-  
 
-
-  container_definitions = <<TASK_DEFINITION
-    [
-       {
-        "logConfiguration": {
-            "logDriver": "awslogs",
-            "secretOptions": null,
-            "options": {
-              "awslogs-group": "task-definition-${var.name}",
-              "awslogs-region": "${var.region}",
-              "awslogs-stream-prefix": "ecs"
-            }
-          },
-
-        "cpu": 0,
-        "image": "${var.image}",
-        "name": "${var.name_of_container}",
-        "portMappings": [
-          {
-            "containerPort": ${var.containerPort},
-            "hostPort": ${var.hostPort}
-          }
-          ]
+  container_definitions = jsonencode([
+    {
+      logConfiguration = {
+        logDriver     = "awslogs"
+        secretOptions = null
+        options = {
+          awslogs-group         = "task-definition-${var.name}"
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "ecs"
         }
-
-    ]
-TASK_DEFINITION
+      }
+      cpu   = 0
+      image = var.image
+      name  = var.name_of_container
+      portMappings = [
+        {
+          containerPort = var.containerPort
+          hostPort      = var.hostPort
+        }
+      ]
+    },
+    {
+      name      = "cwagent"
+      image     = "amazon/cloudwatch-agent:latest"
+      essential = false
+      environment = [
+        {
+          name  = "CW_CONFIG_CONTENT"
+          value = data.aws_ssm_parameter.cloudwatch_agent.value
+        }
+      ]
+    }
+  ])
 }
 
 resource "aws_cloudwatch_log_group" "log_group_taskDef" {
