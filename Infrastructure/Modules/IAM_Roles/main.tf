@@ -142,6 +142,24 @@ resource "aws_iam_role_policy_attachment" "attach_ecs_exec_role" {
     create_before_destroy = true
   }
 }
+resource "aws_iam_role_policy_attachment" "attach_ecs_exec_role2" {
+  count = length(aws_iam_role.iam_role_ecs_task_execution) > 0 ? 1 : 0
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+  role       = aws_iam_role.iam_role_ecs_task_execution[0].name
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "attach_ecs_exec_role3" {
+  count = length(aws_iam_role.iam_role_ecs_task_execution) > 0 ? 1 : 0
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.iam_role_ecs_task_execution[0].name
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "attach_role" {
   count = var.create_pipeline_policy == true ? 1 : 0
   policy_arn = aws_iam_policy.pipeline_role_policy[0].arn
@@ -294,6 +312,16 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
       "codestar-connections:PassConnection"
     ]
     resources = ["*"]
+  }
+  statement {
+    sid = "AllowParameterStoreRead"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "kms:Decrypt"
+    ]
+    resources = ["arn:aws:ssm:eu-west-2:707798379596:parameter/docker_username", "arn:aws:ssm:eu-west-2:707798379596:parameter/docker_user_token"]
   }
 
 

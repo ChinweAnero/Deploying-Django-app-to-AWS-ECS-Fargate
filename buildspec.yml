@@ -8,6 +8,11 @@ env:
 phases:
   pre_build:
     commands:
+      - echo Fetching credentials from SSM Parameter Store
+      - DOCKERHUB_USERNAME=$(aws ssm get-parameter --name "docker_username" --with-decryption --query "Parameter.Value" --output text)
+      - DOCKERHUB_TOKEN=$(aws ssm get-parameter --name "docker_user_token" --with-decryption --query "Parameter.Value" --output text)
+      - echo Logging into Docker Hub...
+      - echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPO_URL
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
