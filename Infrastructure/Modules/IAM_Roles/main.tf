@@ -319,11 +319,15 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
     sid = "AllowParameterStoreRead"
     effect = "Allow"
     actions = [
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "kms:Decrypt"
+     "logs:CreateLogGroup",
+    "logs:CreateLogStream",
+    "logs:PutLogEvents",
+    "ssm:GetParameter",
+    "ssm:GetParameters",
+    "cloudwatch:PutMetricData",
+    "kms:Decrypt"
     ]
-    resources = ["arn:aws:ssm:eu-west-2:707798379596:parameter/docker_username", "arn:aws:ssm:eu-west-2:707798379596:parameter/docker_user_token"]
+    resources = ["*"]
   }
 
 
