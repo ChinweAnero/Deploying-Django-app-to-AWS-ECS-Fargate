@@ -1,32 +1,3 @@
-resource "aws_ssm_parameter" "cloudwatch_agent" {
-  name  = "/cwagent/config/prometheus"
-  type  = "String"
-  value =  jsonencode({
-    agent = {
-      region = var.region
-    },
-    metrics = {
-      metrics_collected = {
-        prometheus = {
-          prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml",
-          emf_processor = {
-            metric_namespace = "DjangoAppPrometheus"
-          }
-        }
-      }
-    }
-  })
-}
-
-resource "aws_cloudwatch_log_group" "cwagent_logs" {
-  name = "/ecs/cwagent"
-  retention_in_days = 30
-
-  tags = {
-    Environment = "production"
-    Application = "Django_App"
-  }
-}
 
 resource "aws_ecs_task_definition" "task_service" {
   family             = var.family
@@ -65,13 +36,13 @@ resource "aws_ecs_task_definition" "task_service" {
       environment = [
         {
           name  = "CW_CONFIG_CONTENT"
-          value = aws_ssm_parameter.cloudwatch_agent.value
+          value = var.aws_ssm_parameter_value
         }
       ],
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-group         = aws_cloudwatch_log_group.cwagent_logs.name,
+          awslogs-group         = var.aws_cloudwatch_agent_log_group_name,
           awslogs-region        = var.region,
           awslogs-stream-prefix = "cwagent"
         }

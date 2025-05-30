@@ -32,6 +32,12 @@ provider "aws" {
 
 }
 
+# import{
+#   to = aws_ssm_parameter.cloudwatch_agent
+#   id = "/cwagent/config/prometheus"
+#
+# }
+
 #*******************Network*****************************
 module "VPC" {
   source = "./Infrastructure/Modules/Network"
@@ -203,6 +209,8 @@ module "backend_ecs_task_definition" {
   name_of_container = var.container_name_backend
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
+  aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
+  aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
 }
 module "frontend_ecs_task_definition" {
   source = "./Infrastructure/Modules/ECS/TaskDefinition"
@@ -218,6 +226,8 @@ module "frontend_ecs_task_definition" {
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
 
+  aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
+  aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
 }
 
 #*******************security group for ecs tasks*****************************#
@@ -445,5 +455,30 @@ module "codepipeline" {
   s3_bucket_for_codepipelineartifacts = module.s3_for_backend.bucket_id
   depends_on = [module.policy_for_pipeline_role]
   connection_arn     = module.codestar_connection_to_github.codestar_arn
+
+}
+
+import {
+  to = module.cloudwatch_agent.aws_ssm_parameter.cloudwatch_agent
+  id = "/cwagent/config/prometheus"
+}
+
+#cloudwatch_agent
+module "cloudwatch_agent" {
+  source = "./Infrastructure/Modules/Cloudwatch_agent"
+  cloudwatch_agent_name = "/cwagent/config/prometheus"
+  cloudwatch_agent_type = "String"
+
+}
+import {
+  to = module.cloudwatch_agent_log_group.aws_cloudwatch_log_group.cwagent_logs
+  id = "/ecs/cwagent"
+}
+
+#cloudwatch_agent_log_group
+module "cloudwatch_agent_log_group" {
+  source = "./Infrastructure/Modules/Cloudwatch Agent Log Group"
+  cloudwatch_log_group_name = "/ecs/cwagent"
+
 
 }
