@@ -11,6 +11,10 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 
 
+#RUN mkdir -p /opt/aws/amazon-cloudwatch-agent/etc/ && \
+#    cp prometheus.yml /opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml
+
+
 ENV DJANGO_SETTINGS_MODULE=app.settings
 
 CMD ["gunicorn", "app.wsgi:application", "--bind", "0.0.0.0:8000"]
