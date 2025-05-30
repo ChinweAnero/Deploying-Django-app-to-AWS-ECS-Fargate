@@ -44,3 +44,9 @@ variable "hostPort" {
   description = "hostport"
 
 }
+variable "aws_ssm_parameter_value" {
+  type = string
+}
+variable "aws_cloudwatch_agent_log_group_name" {
+  type = string
+}
