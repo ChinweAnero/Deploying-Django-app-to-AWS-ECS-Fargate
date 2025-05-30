@@ -458,10 +458,10 @@ module "codepipeline" {
 
 }
 
-import {
-  to = module.cloudwatch_agent.aws_ssm_parameter.cloudwatch_agent
-  id = "/cwagent/config/prometheus"
-}
+# import {
+#   to = module.cloudwatch_agent.aws_ssm_parameter.cloudwatch_agent
+#   id = "/cwagent/config/prometheus"
+# }
 
 #cloudwatch_agent
 module "cloudwatch_agent" {
@@ -470,10 +470,10 @@ module "cloudwatch_agent" {
   cloudwatch_agent_type = "String"
 
 }
-import {
-  to = module.cloudwatch_agent_log_group.aws_cloudwatch_log_group.cwagent_logs
-  id = "/ecs/cwagent"
-}
+# import {
+#   to = module.cloudwatch_agent_log_group.aws_cloudwatch_log_group.cwagent_logs
+#   id = "/ecs/cwagent"
+# }
 
 #cloudwatch_agent_log_group
 module "cloudwatch_agent_log_group" {
