@@ -50,3 +50,6 @@ variable "aws_ssm_parameter_value" {
 variable "aws_cloudwatch_agent_log_group_name" {
   type = string
 }
+variable "clusterName" {
+  type = string
+}

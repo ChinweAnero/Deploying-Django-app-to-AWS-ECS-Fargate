@@ -34,11 +34,28 @@ resource "aws_ecs_task_definition" "task_service" {
       image     = "amazon/cloudwatch-agent:latest"
       essential = false
       environment = [
-        {
-          name  = "CW_CONFIG_CONTENT"
-          value = var.aws_ssm_parameter_value
-        }
-      ],
+          {
+            name = "CW_CONFIG_CONTENT"
+            value = jsonencode({
+              metrics = {
+                metrics_collected = {
+                  prometheus = {
+                    prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml"
+                  }
+                }
+                metrics_destinations = {
+                  amp = {
+                    region       = "eu-west-2"
+                    workspace_id = "ws-f415a87f-1c1c-4f85-9e39-1bb45d471db2"
+                  }
+                }
+                append_dimensions = {
+                  ClusterName = var.clusterName
+                }
+              }
+            })
+          }
+        ],
       logConfiguration = {
         logDriver = "awslogs",
         options = {
