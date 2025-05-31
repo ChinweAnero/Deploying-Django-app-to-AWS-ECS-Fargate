@@ -5,11 +5,12 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
   value =  jsonencode({
     agent = {
       region = var.region
+      metrics_collection_interval = 60
     },
     metrics = {
       metrics_collected = {
         prometheus = {
-          prometheus_config_path = "prometheus.yml",
+          prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml",
           emf_processor = {
             metric_namespace = "DjangoAppPrometheus"
           }
