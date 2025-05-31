@@ -325,12 +325,14 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
     "ssm:GetParameter",
     "ssm:GetParameters",
     "cloudwatch:PutMetricData",
-    "kms:Decrypt"
+    "kms:Decrypt",
+      "aps:RemoteWrite",
+    "aps:GetSeries",
+    "aps:GetLabels",
+    "aps:GetMetricMetadata"
     ]
     resources = ["*"]
   }
-
-
 }
 
 data "aws_iam_policy_document" "role_policy_for_ecs_tasks" {
@@ -375,7 +377,11 @@ data "aws_iam_policy_document" "role_policy_for_ecs_tasks" {
       "cloudwatch:PutMetricData",
       "ssm:GetParameters",
       "ssm:GetParameter",
-      "kms:Decrypt"
+      "kms:Decrypt",
+      "aps:RemoteWrite",
+      "aps:GetSeries",
+      "aps:GetLabels",
+      "aps:GetMetricMetadata"
     ]
     resources = ["*"]
   }

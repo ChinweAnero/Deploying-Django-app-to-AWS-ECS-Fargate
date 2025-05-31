@@ -472,7 +472,7 @@ module "cloudwatch_agent" {
   source = "./Infrastructure/Modules/Cloudwatch_agent"
   cloudwatch_agent_name = "/cwagent/config/prometheus"
   cloudwatch_agent_type = "String"
-
+  clusterName = module.cluster_ecs.name_of_cluster
 }
 # import {
 #   to = module.cloudwatch_agent_log_group.aws_cloudwatch_log_group.cwagent_logs

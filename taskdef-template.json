@@ -36,10 +36,10 @@
       "name": "cwagent",
       "image": "707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo:latest",
       "essential": false,
-      "secrets": [
+      "environment": [
         {
           "name": "CW_CONFIG_CONTENT",
-          "valueFrom": "arn:aws:ssm:eu-west-2:707798379596:parameter/cwagent/config/prometheus"
+          "value": "\"{\\\"metrics\\\":{\\\"metrics_collected\\\":{\\\"prometheus\\\":{\\\"prometheus_config_path\\\":\\\"/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml\\\"}},\\\"metrics_destinations\\\":{\\\"amp\\\":{\\\"region\\\":\\\"eu-west-2\\\",\\\"workspace_id\\\":\\\"ws-f415a87f-1c1c-4f85-9e39-1bb45d471db2\\\"}},\\\"append_dimensions\\\":{\\\"ClusterName\\\":\\\"esc-prod-cluster\\\"}}}\""
         }
       ],
       "logConfiguration": {
