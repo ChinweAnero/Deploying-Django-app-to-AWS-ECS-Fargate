@@ -161,6 +161,10 @@ module "backend_ecr" {
   source = "./Infrastructure/Modules/ECR"
   erc_name = "backend-ecr-repo"
 }
+module "cwagent_ecr_repo" {
+  source = "./Infrastructure/Modules/ECR"
+  erc_name = "cloudwatch-agent-ecr-repo"
+}
 #*******************************dynamodb**************************************#
 module "dynamodb_table" {
   source = "./Infrastructure/Modules/DynamoDB"
