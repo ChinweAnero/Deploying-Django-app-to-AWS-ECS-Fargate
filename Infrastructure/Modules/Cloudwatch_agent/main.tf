@@ -11,9 +11,7 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
       metrics_collected = {
         prometheus = {
           prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml",
-          emf_processor = {
-            metric_namespace = "DjangoAppPrometheus"
-          }
+
         }
       }
     }
