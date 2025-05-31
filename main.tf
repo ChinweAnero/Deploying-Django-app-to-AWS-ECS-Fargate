@@ -215,6 +215,7 @@ module "backend_ecs_task_definition" {
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
   aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
   aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
+  clusterName = module.cluster_ecs.name_of_cluster
 }
 module "frontend_ecs_task_definition" {
   source = "./Infrastructure/Modules/ECS/TaskDefinition"
@@ -232,6 +233,7 @@ module "frontend_ecs_task_definition" {
 
   aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
   aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
+  clusterName                         = module.cluster_ecs.name_of_cluster
 }
 
 #*******************security group for ecs tasks*****************************#
