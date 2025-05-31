@@ -11,4 +11,7 @@ variable "cloudwatch_agent_type" {
   type = string
 
 }
+variable "clusterName" {
+  type = string
+}
 
