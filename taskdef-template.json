@@ -36,10 +36,10 @@
       "name": "cwagent",
       "image": "707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo:latest",
       "essential": false,
-      "environment": [
+      "secrets": [
         {
           "name": "CW_CONFIG_CONTENT",
-          "valueFrom": "/cwagent/config/prometheus"
+          "valueFrom": "arn:aws:ssm:eu-west-2:707798379596:parameter/cwagent/config/prometheus"
         }
       ],
       "logConfiguration": {
