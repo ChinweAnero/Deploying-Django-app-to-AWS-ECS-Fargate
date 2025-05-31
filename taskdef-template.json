@@ -39,7 +39,7 @@
       "environment": [
         {
           "name": "CW_CONFIG_CONTENT",
-          "valueFrom": "arn:aws:ssm:eu-west-2:707798379596:arn:aws:ssm:eu-west-2:707798379596:parameter/cwagent/config/prometheus"
+          "valueFrom": "/cwagent/config/prometheus"
         }
       ],
       "logConfiguration": {
