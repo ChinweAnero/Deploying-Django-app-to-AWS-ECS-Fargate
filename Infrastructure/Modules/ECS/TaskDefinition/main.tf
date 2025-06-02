@@ -50,6 +50,11 @@ resource "aws_ecs_task_definition" "task_service" {
               append_dimensions = {
                 ClusterName = var.clusterName
               }
+              metrics_destinations = {
+                  amp = {
+                    workspace_id = "ws-9e3281be-1f50-4da3-9eb8-e1576377f610"
+                  }
+                }
               }
             })
          }

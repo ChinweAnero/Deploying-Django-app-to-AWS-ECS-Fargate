@@ -39,7 +39,7 @@
       "environment": [
         {
           "name": "CW_CONFIG_CONTENT",
-          "value": "{\"metrics\":{\"metrics_collected\":{\"prometheus\":{\"prometheus_config_path\":\"/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml\"}},\"append_dimensions\":{\"ClusterName\":\"esc-prod-cluster\"}}}"
+          "value": "{\"metrics\":{\"metrics_collected\":{\"prometheus\":{\"prometheus_config_path\":\"/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml\"}},\"metrics_destinations\":{\"amp\":{\"workspace_id\":\"ws-9e3281be-1f50-4da3-9eb8-e1576377f610\"}},\"append_dimensions\":{\"ClusterName\":\"esc-prod-cluster\"}}}"
 
 
 
