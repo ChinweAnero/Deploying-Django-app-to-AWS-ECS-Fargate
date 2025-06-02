@@ -475,6 +475,7 @@ module "cloudwatch_agent" {
   cloudwatch_agent_name = "/cwagent/config/prometheus"
   cloudwatch_agent_type = "String"
   clusterName = module.cluster_ecs.name_of_cluster
+  promethues_workspace_id = module.prometheus_workspace.workspace_id
 }
 # import {
 #   to = module.cloudwatch_agent_log_group.aws_cloudwatch_log_group.cwagent_logs
@@ -487,4 +488,9 @@ module "cloudwatch_agent_log_group" {
   cloudwatch_log_group_name = "/ecs/cwagent"
 
 
+}
+
+module "prometheus_workspace" {
+  source = "./Infrastructure/Modules/Prometheus Workspace"
+  prometheus_workspace = "workspace"
 }

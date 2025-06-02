@@ -13,7 +13,7 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
       "metrics_destinations" = {
         "amp" = {
           "region"       = "eu-west-2",
-          "workspace_id" = "ws-f415a87f-1c1c-4f85-9e39-1bb45d471db2"
+          "workspace_id" = var.promethues_workspace_id
         }
       },
       "append_dimensions": {
