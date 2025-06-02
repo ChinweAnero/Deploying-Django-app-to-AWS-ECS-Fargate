@@ -39,7 +39,7 @@
       "environment": [
         {
           "name": "CW_CONFIG_CONTENT",
-            "value": "{\"metrics\":{\"metrics_collected\":{\"prometheus\":{\"prometheus_config_path\":\"/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml\"}},\"append_dimensions\":{\"ClusterName\":\"esc-prod-cluster\"},\"endpoint_override\":\"aps-workspaces.eu-west-2.amazonaws.com\",\"force_flush_interval\":5,\"aggregation_dimensions\":[[\"ClusterName\"]],\"output_control\":{\"prometheus_remote_write\":{\"enabled\":true}}}}"
+          "value": "{\"metrics\":{\"metrics_collected\":{\"prometheus\":{\"prometheus_config_path\":\"/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml\"}},\"append_dimensions\":{\"ClusterName\":\"esc-prod-cluster\"}}}"
 
 
 

@@ -50,14 +50,6 @@ resource "aws_ecs_task_definition" "task_service" {
           append_dimensions = {
             ClusterName = var.clusterName
           }
-          endpoint_override = "aps-workspaces.eu-west-2.amazonaws.com"
-          force_flush_interval = 5
-          aggregation_dimensions = [["ClusterName"]]
-          output_control = {
-            prometheus_remote_write = {
-              enabled = true
-            }
-          }
           }
         })
     }
