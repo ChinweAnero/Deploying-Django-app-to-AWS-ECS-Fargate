@@ -1,22 +1,22 @@
 # prometheus.yml
-#global:
-#  scrape_interval: 60s
-#
-#scrape_configs:
-#  - job_name: "django_app"
-#    metrics_path: /metrics
-#    static_configs:
-#      - targets: ["localhost:8000"]
-
 global:
-  scrape_interval: 15s
+  scrape_interval: 60s
 
 scrape_configs:
   - job_name: "django_app"
+    metrics_path: /metrics
     static_configs:
-      - targets: ["localhost:8080"]
+      - targets: ["localhost:8000"]
 
-remote_write:
-  - url: https://aps-workspaces.eu-west-2.amazonaws.com/workspaces/ws-9e3281be-1f50-4da3-9eb8-e1576377f610/api/v1/remote_write
-    sigv4:
-      region: eu-west-2
+#global:
+#  scrape_interval: 15s
+#
+#scrape_configs:
+#  - job_name: "django_app"
+#    static_configs:
+#      - targets: ["localhost:8080"]
+#
+#remote_write:
+#  - url: https://aps-workspaces.eu-west-2.amazonaws.com/workspaces/ws-9e3281be-1f50-4da3-9eb8-e1576377f610/api/v1/remote_write
+#    sigv4:
+#      region: eu-west-2
