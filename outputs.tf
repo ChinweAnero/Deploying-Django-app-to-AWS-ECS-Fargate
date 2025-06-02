@@ -12,3 +12,6 @@ output "cloudwatch_agent_id" {
 output "cloudwatch_agent_log_group_name" {
   value = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
 }
+output "prometheus_workspace_id" {
+  value = module.prometheus_workspace.workspace_id
+}

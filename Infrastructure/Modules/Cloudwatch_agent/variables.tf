@@ -15,3 +15,7 @@ variable "clusterName" {
   type = string
 }
 
+variable "promethues_workspace_id" {
+  type = string
+  description = "promethues workspace"
+}
