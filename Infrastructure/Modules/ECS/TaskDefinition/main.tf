@@ -38,21 +38,21 @@ resource "aws_ecs_task_definition" "task_service" {
         "-config", "env:CW_CONFIG_CONTENT"
       ]
       environment = [
-         {
-      name = "CW_CONFIG_CONTENT"
-      value = jsonencode({
-        metrics = {
-          metrics_collected = {
-            prometheus = {
-              prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml"
-            }
-          }
-          append_dimensions = {
-            ClusterName = var.clusterName
-          }
-          }
-        })
-    }
+        {
+          name = "CW_CONFIG_CONTENT"
+          value = jsonencode({
+            metrics = {
+              metrics_collected = {
+                prometheus = {
+                  prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml"
+                }
+              }
+              append_dimensions = {
+                ClusterName = var.clusterName
+              }
+              }
+            })
+         }
 
         ],
       logConfiguration = {
