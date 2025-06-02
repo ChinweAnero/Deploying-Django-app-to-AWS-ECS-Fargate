@@ -38,27 +38,30 @@ resource "aws_ecs_task_definition" "task_service" {
         "-config", "env:CW_CONFIG_CONTENT"
       ]
       environment = [
-          {
-            name = "CW_CONFIG_CONTENT"
-            value = jsonencode({
-              metrics = {
-                metrics_collected = {
-                  prometheus = {
-                    prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml"
-                  }
-                }
-                metrics_destinations = {
-                  amp = {
-                    region       = "eu-west-2"
-                    workspace_id = "ws-f415a87f-1c1c-4f85-9e39-1bb45d471db2"
-                  }
-                }
-                append_dimensions = {
-                  ClusterName = var.clusterName
-                }
-              }
-            })
+         {
+      name = "CW_CONFIG_CONTENT"
+      value = jsonencode({
+        metrics = {
+          metrics_collected = {
+            prometheus = {
+              prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml"
+            }
           }
+          append_dimensions = {
+            ClusterName = var.clusterName
+          }
+          endpoint_override = "aps-workspaces.eu-west-2.amazonaws.com"
+          force_flush_interval = 5
+          aggregation_dimensions = [["ClusterName"]]
+          output_control = {
+            prometheus_remote_write = {
+              enabled = true
+            }
+          }
+          }
+        })
+    }
+
         ],
       logConfiguration = {
         logDriver = "awslogs",
