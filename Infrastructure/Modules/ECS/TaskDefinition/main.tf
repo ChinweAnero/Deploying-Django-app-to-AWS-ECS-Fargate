@@ -33,6 +33,10 @@ resource "aws_ecs_task_definition" "task_service" {
       name      = "cwagent"
       image     = "amazon/cloudwatch-agent:latest"
       essential = false
+      command   = [
+        "/opt/aws/amazon-cloudwatch-agent/bin/start-amazon-cloudwatch-agent",
+        "-config", "env:CW_CONFIG_CONTENT"
+      ]
       environment = [
           {
             name = "CW_CONFIG_CONTENT"
