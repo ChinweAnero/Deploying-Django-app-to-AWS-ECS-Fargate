@@ -23,6 +23,10 @@ phases:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${IMAGE_TAG:-latest}
 
+      - AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --name "/my/aws/key_id" --with-decryption --query "Parameter.Value" --output text)
+      - AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --name "/my/aws/secret_key" --with-decryption --query "Parameter.Value" --output text)
+
+
   build:
     commands:
       - echo Building frontend Docker image...
