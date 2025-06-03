@@ -2,6 +2,7 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
   name = var.cloudwatch_agent_name
   type = var.cloudwatch_agent_type
 
+
   value = jsonencode({
     metrics = {
       metrics_collected = {
