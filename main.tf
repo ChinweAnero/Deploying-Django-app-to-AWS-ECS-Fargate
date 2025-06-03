@@ -188,13 +188,13 @@ module "role_for_ecs" {
 
 }
 
-#***************************iam policy****************************************#
+#***************************iam policy for ecs****************************************#
 module "policy_for_ecs_role" {
   source = "./Infrastructure/Modules/IAM_Roles"
   name_ = "ecs-policy-${var.environment}"
   attach_with_role = module.role_for_ecs.ecs_name_
   codedeploy_role_name = ""
-  ecs_task_role_name = ""
+  ecs_task_role_name = module.role_for_ecs.ecs_task_role_name
   pipeline_role_name = ""
   create_ecs_policy = true
 }
@@ -392,7 +392,7 @@ module "codebuild_frontend" {
   container_name = var.container_name_frontend
   dynamodb_table = ""
   ecs_role = var.iam_for_cicd["ecs"]
-  ecs_task_role = ""
+  ecs_task_role = module.role_for_ecs.ecs_task_role_name
   folder_path = var.folder_path_frontend
   name = "codebuild-frontend-${var.environment}"
   region_aws = var.aws_region
