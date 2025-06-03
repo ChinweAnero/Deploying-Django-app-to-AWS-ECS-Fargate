@@ -248,7 +248,8 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:InitiateLayerUpload",
       "ecr:PutImage",
-      "ecr:UploadLayerPart"
+      "ecr:UploadLayerPart",
+       "ecr:GetAuthorizationToken"
     ]
     resources = var.ecr_repo
   }
@@ -282,7 +283,8 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
       "ecs:StopTask",
       "ecs:UpdateService",
       "ecs:UpdateCluster",
-      "ecs:UpdateTaskSet"
+      "ecs:UpdateTaskSet",
+      "ecs:DescribeClusters"
     ]
     resources = ["*"]
   }
@@ -302,6 +304,8 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
       "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:GetParametersByPath",
       "cloudwatch:PutMetricData"
     ]
     resources = ["*"]

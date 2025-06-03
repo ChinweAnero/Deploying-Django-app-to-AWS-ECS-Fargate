@@ -17,3 +17,9 @@ output "ecs_task_role_arn" {
   value = (var.create_ecs_role == true ? (length(aws_iam_role.role_for_ecs_task) > 0 ? aws_iam_role.role_for_ecs_task[0].arn : "") :
   "")
 }
+output "ecs_task_role_name" {
+  value = aws_iam_role.role_for_ecs_task.name
+}
+output "pipeline_role_name" {
+  value = aws_iam_role.pipeline_role.name
+}
