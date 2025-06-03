@@ -60,8 +60,8 @@ phases:
 
 
       - echo Validating CloudWatch Agent config from SSM...
+      - $CLOUDWATCH_AGENT_SSM_NAME" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
       - CONFIG_FILE=config.json
-      - aws ssm get-parameter --name "$CLOUDWATCH_AGENT_SSM_NAME" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
 
       - docker run --rm \
           -v $(pwd):/configs \
