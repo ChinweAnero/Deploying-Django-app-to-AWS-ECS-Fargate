@@ -5,11 +5,12 @@ env:
     AWS_REGION: eu-west-2
     FRONTEND_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
     CWAGENT_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo
+    CWAGENT_CONFIG_SSM_PARAM: "/cwagent/config/prometheus"
 
 phases:
   pre_build:
     commands:
-      - echo Fetching credentials from SSM Parameter Store
+      - echo Fetching credentials from SSM Parameter Store...
       - DOCKERHUB_USERNAME=$(aws ssm get-parameter --name "docker_username" --with-decryption --query "Parameter.Value" --output text)
       - DOCKERHUB_TOKEN=$(aws ssm get-parameter --name "docker_user_token" --with-decryption --query "Parameter.Value" --output text)
 
@@ -23,10 +24,9 @@ phases:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${IMAGE_TAG:-latest}
 
-      - export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --name "/my/aws/secret_key" --with-decryption --query "Parameter.Value" --output text)
+      - echo Exporting AWS credentials from SSM...
       - export AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --name "/my/aws/key_id" --with-decryption --query "Parameter.Value" --output text)
-      - export CLOUDWATCH_AGENT_SSM_NAME=$(aws ssm get-parameter --name "/cwagent/config/prometheus" --with-decryption --query "Parameter.Value" --output text)
-
+      - export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --name "/my/aws/secret_key" --with-decryption --query "Parameter.Value" --output text)
 
   build:
     commands:
@@ -34,7 +34,7 @@ phases:
       - docker build -t $FRONTEND_REPO_URL:$IMAGE_TAG -f Dockerfile .
       - docker tag $FRONTEND_REPO_URL:$IMAGE_TAG $FRONTEND_REPO_URL:latest
 
-      - echo Building cwagent Docker image...
+      - echo Building CloudWatch Agent Docker image...
       - docker build -t $CWAGENT_REPO_URL:$IMAGE_TAG -f cloudwatch-agent/Dockerfile ./cloudwatch-agent
       - docker tag $CWAGENT_REPO_URL:$IMAGE_TAG $CWAGENT_REPO_URL:latest
 
@@ -44,24 +44,23 @@ phases:
       - docker push $FRONTEND_REPO_URL:$IMAGE_TAG
       - docker push $FRONTEND_REPO_URL:latest
 
-      - echo Pushing cwagent image...
+      - echo Pushing CloudWatch Agent image...
       - docker push $CWAGENT_REPO_URL:$IMAGE_TAG
       - docker push $CWAGENT_REPO_URL:latest
 
-      - echo Updating task definition with new frontend image URI...
+      - echo Updating ECS task definition with new frontend image URI...
       - export IMAGE_URI=$FRONTEND_REPO_URL:$IMAGE_TAG
       - sed "s|<IMAGE_URI>|$IMAGE_URI|g" taskdef-template.json > taskdef.json
 
-      - echo Registering task definition...
+      - echo Registering new ECS task definition...
       - TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
 
       - echo Generating appspec.json from template...
       - sed "s|\[TASK_DEF_ARN\]|$TASK_DEF_ARN|g" appspec-template.json > appspec.json
 
-
-      - echo Validating CloudWatch Agent config from SSM...
-      - $CLOUDWATCH_AGENT_SSM_NAME" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
+      - echo Fetching CloudWatch Agent config from SSM and validating...
       - CONFIG_FILE=config.json
+      - aws ssm get-parameter --name "$CWAGENT_CONFIG_SSM_PARAM" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
 
       - docker run --rm \
           -v $(pwd):/configs \
@@ -73,7 +72,6 @@ phases:
           -a validate \
           -c file:/configs/$CONFIG_FILE \
           -m ecs
-
 
 artifacts:
   files:
