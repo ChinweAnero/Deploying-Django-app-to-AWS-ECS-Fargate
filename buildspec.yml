@@ -21,8 +21,9 @@ phases:
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $FRONTEND_REPO_URL
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $CWAGENT_REPO_URL
 
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${IMAGE_TAG:-latest}
+      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest} | cut -c 1-7)
+      - echo "Resolved image tag: $IMAGE_TAG"
+
 
       - echo Exporting AWS credentials from SSM...
       - export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --name "/my/aws/secret_key" --with-decryption --query "Parameter.Value" --output text)
@@ -62,16 +63,18 @@ phases:
       - CONFIG_FILE=config.json
       - aws ssm get-parameter --name "$CWAGENT_CONFIG_SSM_PARAM" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
 
+      - echo "Using image: $CWAGENT_REPO_URL:$IMAGE_TAG"
       - docker run --rm \
-          -v $(pwd):/configs \
-          -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-          -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-          -e AWS_REGION=$AWS_REGION \
-          $CWAGENT_REPO_URL:$IMAGE_TAG \
-          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-          -a validate \
-          -c file:/configs/$CONFIG_FILE \
-          -m ecs
+        -v $(pwd):/configs \
+        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+        -e AWS_REGION=$AWS_REGION \
+        $CWAGENT_REPO_URL:$IMAGE_TAG \
+        /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+        -a validate \
+        -c file:/configs/$CONFIG_FILE \
+        -m ecs
+
 
 artifacts:
   files:
