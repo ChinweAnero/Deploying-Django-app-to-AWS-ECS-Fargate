@@ -5,12 +5,11 @@ env:
     AWS_REGION: eu-west-2
     FRONTEND_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
     CWAGENT_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo
-    CWAGENT_CONFIG_SSM_PARAM: "/cwagent/config/prometheus"
 
 phases:
   pre_build:
     commands:
-      - echo Fetching credentials from SSM Parameter Store...
+      - echo Fetching credentials from SSM Parameter Store
       - DOCKERHUB_USERNAME=$(aws ssm get-parameter --name "docker_username" --with-decryption --query "Parameter.Value" --output text)
       - DOCKERHUB_TOKEN=$(aws ssm get-parameter --name "docker_user_token" --with-decryption --query "Parameter.Value" --output text)
 
@@ -21,13 +20,13 @@ phases:
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $FRONTEND_REPO_URL
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $CWAGENT_REPO_URL
 
-      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest} | cut -c 1-7)
-      - echo "Resolved image tag: $IMAGE_TAG"
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${IMAGE_TAG:-latest}
 
-
-      - echo Exporting AWS credentials from SSM...
       - export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --name "/my/aws/secret_key" --with-decryption --query "Parameter.Value" --output text)
       - export AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --name "/my/aws/key_id" --with-decryption --query "Parameter.Value" --output text)
+      - export CLOUDWATCH_AGENT_SSM_NAME=$(aws ssm get-parameter --name "/cwagent/config/prometheus" --with-decryption --query "Parameter.Value" --output text)
+
 
   build:
     commands:
@@ -35,7 +34,7 @@ phases:
       - docker build -t $FRONTEND_REPO_URL:$IMAGE_TAG -f Dockerfile .
       - docker tag $FRONTEND_REPO_URL:$IMAGE_TAG $FRONTEND_REPO_URL:latest
 
-      - echo Building CloudWatch Agent Docker image...
+      - echo Building cwagent Docker image...
       - docker build -t $CWAGENT_REPO_URL:$IMAGE_TAG -f cloudwatch-agent/Dockerfile ./cloudwatch-agent
       - docker tag $CWAGENT_REPO_URL:$IMAGE_TAG $CWAGENT_REPO_URL:latest
 
@@ -45,35 +44,35 @@ phases:
       - docker push $FRONTEND_REPO_URL:$IMAGE_TAG
       - docker push $FRONTEND_REPO_URL:latest
 
-      - echo Pushing CloudWatch Agent image...
+      - echo Pushing cwagent image...
       - docker push $CWAGENT_REPO_URL:$IMAGE_TAG
       - docker push $CWAGENT_REPO_URL:latest
 
-      - echo Updating ECS task definition with new frontend image URI...
+      - echo Updating task definition with new frontend image URI...
       - export IMAGE_URI=$FRONTEND_REPO_URL:$IMAGE_TAG
       - sed "s|<IMAGE_URI>|$IMAGE_URI|g" taskdef-template.json > taskdef.json
 
-      - echo Registering new ECS task definition...
+      - echo Registering task definition...
       - TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
 
       - echo Generating appspec.json from template...
       - sed "s|\[TASK_DEF_ARN\]|$TASK_DEF_ARN|g" appspec-template.json > appspec.json
 
-      - echo Fetching CloudWatch Agent config from SSM and validating...
-      - CONFIG_FILE=config.json
-      - aws ssm get-parameter --name "$CWAGENT_CONFIG_SSM_PARAM" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
 
-      - echo "Using image: $CWAGENT_REPO_URL:$IMAGE_TAG"
+      - echo Validating CloudWatch Agent config from SSM...
+      - $CLOUDWATCH_AGENT_SSM_NAME" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
+      - CONFIG_FILE=config.json
+
       - docker run --rm \
-        -v $(pwd):/configs \
-        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-        -e AWS_REGION=$AWS_REGION \
-        $CWAGENT_REPO_URL:$IMAGE_TAG \
-        /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-        -a validate \
-        -c file:/configs/$CONFIG_FILE \
-        -m ecs
+          -v $(pwd):/configs \
+          -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+          -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+          -e AWS_REGION=$AWS_REGION \
+          $CWAGENT_REPO_URL:$IMAGE_TAG \
+          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+          -a validate \
+          -c file:/configs/$CONFIG_FILE \
+          -m ecs
 
 
 artifacts:
