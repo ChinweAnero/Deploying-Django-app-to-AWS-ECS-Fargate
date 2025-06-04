@@ -1,0 +1,30 @@
+extensions:
+  sigv4auth:
+    region: eu-west-2
+    service: aps
+
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "myapp"
+          static_configs:
+            - targets: ["localhost:8080"]
+
+exporters:
+  awsemf:
+    region: eu-west-2
+    authentication:
+      authenticator: sigv4auth
+
+  prometheusremotewrite:
+    endpoint: "https://aps-workspaces.eu-west-2.amazonaws.com/workspaces/ws-9e3281be-1f50-4da3-9eb8-e1576377f610/api/v1/remote_write"
+    authentication:
+      authenticator: sigv4auth
+
+service:
+  extensions: [sigv4auth]
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      exporters: [awsemf, prometheusremotewrite]
