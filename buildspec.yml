@@ -69,16 +69,9 @@ phases:
       - CONFIG_FILE=config.json
       - aws ssm get-parameter --name "$CLOUDWATCH_AGENT_SSM_NAME" --with-decryption --query "Parameter.Value" --output text > $CONFIG_FILE
 
-      - echo "==== DEBUG: Variables Dump ===="
+
       - echo "CWAGENT_REPO_URL=$CWAGENT_REPO_URL"
       - echo "IMAGE_TAG=$IMAGE_TAG"
-      - echo "Full image ref: ${CWAGENT_REPO_URL}:${IMAGE_TAG}"
-      - echo "==== DEBUG END ===="
-
-      - if [ -z "$CWAGENT_REPO_URL" ]; then echo "ERROR: CWAGENT_REPO_URL is empty"; exit 1; fi
-      - if [ -z "$IMAGE_TAG" ]; then echo "ERROR: IMAGE_TAG is empty"; exit 1; fi
-
-
 
 
       - docker run --rm \
