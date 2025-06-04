@@ -64,7 +64,29 @@ resource "aws_ecs_task_definition" "task_service" {
           awslogs-stream-prefix = "cwagent"
         }
       }
-    }
+
+        name      = "otel-collector"
+        image     = "public.ecr.aws/aws-observability/aws-otel-collector:latest"
+        essential = false
+        environment = [
+          {
+            name  = "AWS_REGION"
+            value = var.region
+          },
+          {
+            name  = "OTEL_CONFIG"
+            value = "/etc/otel-config.yaml"
+          }
+        ]
+        logConfiguration = {
+          logDriver = "awslogs"
+          options = {
+            awslogs-group         = "task-definition-${var.name}"
+            awslogs-region        = var.region
+            awslogs-stream-prefix = "otel"
+          }
+        }
+      }
   ])
 }
 

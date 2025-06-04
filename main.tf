@@ -31,8 +31,6 @@ provider "aws" {
 
 }
 
-
-
 #*******************Network*****************************
 module "VPC" {
   source = "./Infrastructure/Modules/Network"
@@ -159,6 +157,11 @@ module "backend_ecr" {
 module "cwagent_ecr_repo" {
   source = "./Infrastructure/Modules/ECR"
   erc_name = "cloudwatch-agent-ecr-repo"
+}
+
+module "otel_ecr_repo" {
+  source = "./Infrastructure/Modules/ECR"
+  erc_name = "otel-config-repo"
 }
 #*******************************dynamodb**************************************#
 module "dynamodb_table" {
@@ -489,3 +492,5 @@ module "prometheus_workspace" {
   source = "./Infrastructure/Modules/Prometheus Workspace"
   prometheus_workspace = "workspace"
 }
+
+

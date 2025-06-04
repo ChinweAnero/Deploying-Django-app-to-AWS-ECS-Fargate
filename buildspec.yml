@@ -5,6 +5,7 @@ env:
     AWS_REGION: eu-west-2
     FRONTEND_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
     CWAGENT_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo
+    OTEL_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo
 
 phases:
   pre_build:
@@ -24,8 +25,6 @@ phases:
       - IMAGE_TAG=${IMAGE_TAG:-latest}
 
 
-      - export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --name "/my/aws/secret_key" --with-decryption --query "Parameter.Value" --output text)
-      - export AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --name "/my/aws/key_id" --with-decryption --query "Parameter.Value" --output text)
       - export CLOUDWATCH_AGENT_SSM_NAME="/cwagent/config/prometheus"
 
 
@@ -41,6 +40,10 @@ phases:
       - docker build -t $CWAGENT_REPO_URL:$IMAGE_TAG -f cloudwatch-agent/Dockerfile ./cloudwatch-agent
       - docker tag $CWAGENT_REPO_URL:$IMAGE_TAG $CWAGENT_REPO_URL:latest
 
+      - echo Building otel docker image
+      - docker build -t $OTEL_REPO_URL:$IMAGE_TAG -f Otel_config/Dockerfile ./Otel_config
+      - docker tag $OTEL_REPO_URL:$IMAGE_TAG $OTEL_REPO_URL:latest
+
   post_build:
     commands:
       - echo Pushing frontend image...
@@ -50,6 +53,10 @@ phases:
       - echo Pushing cwagent image...
       - docker push $CWAGENT_REPO_URL:$IMAGE_TAG
       - docker push $CWAGENT_REPO_URL:latest
+
+      - echo pushing otel image..
+      - docker push $OTEL_REPO_URL:$IMAGE_TAG
+      - docker push $OTEL_REPO_URL:latest
 
       - echo Updating task definition with new frontend image URI...
       - export IMAGE_URI=$FRONTEND_REPO_URL:$IMAGE_TAG
