@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "task_service" {
       }
 
         name      = "otel-collector"
-        image     = "public.ecr.aws/aws-observability/aws-otel-collector:latest"
+        image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo:latest"
         essential = false
         environment = [
           {
