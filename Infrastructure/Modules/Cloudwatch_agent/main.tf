@@ -3,6 +3,9 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
   type = var.cloudwatch_agent_type
 
   value = jsonencode({
+    agent = {
+      region = "eu-west-2"
+    },
     metrics = {
       metrics_collected = {
         prometheus = {
