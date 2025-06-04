@@ -37,6 +37,9 @@ resource "aws_ecs_task_definition" "task_service" {
         {
           name = "CW_CONFIG_CONTENT"
           value = jsonencode({
+            agent = {
+              region = "eu-west-2"
+            },
             metrics = {
               metrics_collected = {
                 prometheus = {
