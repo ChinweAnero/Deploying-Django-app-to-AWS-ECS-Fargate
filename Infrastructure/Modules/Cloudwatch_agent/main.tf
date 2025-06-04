@@ -15,7 +15,6 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
 
       metrics_destinations = {
         amp = {
-          region       = "eu-west-2"
           workspace_id = var.promethues_workspace_id
         }
       }
