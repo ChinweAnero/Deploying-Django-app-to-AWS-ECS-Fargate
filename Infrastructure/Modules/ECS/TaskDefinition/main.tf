@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "task_service" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-group         = "task-definition-${var.name}"
+            awslogs-group         = var.otel_collector_log
             awslogs-region        = var.region
             awslogs-stream-prefix = "otel"
           }

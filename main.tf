@@ -214,6 +214,8 @@ module "backend_ecs_task_definition" {
   aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
   aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
   clusterName = module.cluster_ecs.name_of_cluster
+  otel_collector_log                  = module.otel_collector_logs.cloudwatch_agent_log_group_name
+
 }
 module "frontend_ecs_task_definition" {
   source = "./Infrastructure/Modules/ECS/TaskDefinition"
@@ -232,6 +234,7 @@ module "frontend_ecs_task_definition" {
   aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
   aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
   clusterName                         = module.cluster_ecs.name_of_cluster
+  otel_collector_log                  = module.otel_collector_logs.cloudwatch_agent_log_group_name
 }
 
 #*******************security group for ecs tasks*****************************#
@@ -349,7 +352,7 @@ module "policy_for_pipeline_role" {
   create_pipeline_policy = true
   attach_with_role = module.pipeline_role.ecs_name_
   create_ecs_policy = true
-  ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn, module.cwagent_ecr_repo.ecr_repo_arn]
+  ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn, module.cwagent_ecr_repo.ecr_repo_arn, module.otel_ecr_repo.ecr_repo_arn]
   codebuild_projects = [module.codebuild_backend.project_arn, module.codebuild_frontend.project_arn]
   code_deploy_projects = [module.codedeploy_backend.application_arn, module.codedeploy_backend.deployment_group_arn, module.codedeploy_frontend.application_arn, module.codedeploy_frontend.deployment_group_arn]
   codedeploy_role_name = ""
@@ -491,6 +494,11 @@ module "cloudwatch_agent_log_group" {
 module "prometheus_workspace" {
   source = "./Infrastructure/Modules/Prometheus Workspace"
   prometheus_workspace = "workspace"
+}
+
+module "otel_collector_logs" {
+  source = "./Infrastructure/Modules/Cloudwatch Agent Log Group"
+  cloudwatch_log_group_name = "otel/collector"
 }
 
 
