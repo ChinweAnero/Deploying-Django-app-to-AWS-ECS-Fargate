@@ -21,12 +21,6 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
         ClusterName = var.clusterName
       }
 
-      extensions = {
-        sigv4auth = {
-          service = "aps"
-          region  = "eu-west-2"
-        }
-      }
     }
   })
   }
