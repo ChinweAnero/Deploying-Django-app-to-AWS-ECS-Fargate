@@ -3,10 +3,10 @@
 # The configuration for the `remote` backend.
 terraform {
   backend "remote" {
-        # The name of your Terraform Cloud organization.
+
     organization = "Chinwe-Org"
 
-        # The name of the Terraform Cloud workspace to store Terraform state files in.
+
     workspaces {
       name = "weather_app_infra_workspace"
     }
@@ -28,15 +28,10 @@ terraform {
 # AWS Provider
 provider "aws" {
   region                   = "eu-west-2"
-  #shared_credentials_files = ["C:/Users/Chinwe/.aws/credentials"]
 
 }
 
-# import{
-#   to = aws_ssm_parameter.cloudwatch_agent
-#   id = "/cwagent/config/prometheus"
-#
-# }
+
 
 #*******************Network*****************************
 module "VPC" {
