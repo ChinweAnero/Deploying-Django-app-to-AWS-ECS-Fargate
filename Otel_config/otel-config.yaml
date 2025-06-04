@@ -18,7 +18,7 @@ exporters:
       authenticator: sigv4auth
 
   prometheusremotewrite:
-    endpoint: "https://aps-workspaces.eu-west-2.amazonaws.com/workspaces/ws-9e3281be-1f50-4da3-9eb8-e1576377f610/api/v1/remote_write"
+    endpoint: "https://aps-workspaces.eu-west-2.amazonaws.com/workspaces/ws-94d077b9-e437-41f7-81ab-120e6ed9fd16/api/v1/remote_write"
     authentication:
       authenticator: sigv4auth
 
