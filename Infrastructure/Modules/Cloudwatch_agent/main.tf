@@ -21,7 +21,19 @@ resource "aws_ssm_parameter" "cloudwatch_agent" {
         ClusterName = var.clusterName
       }
 
+    },
+    otel = {
+      enabled          = true,
+      config_file_path = "/etc/otel-config.yaml"
     }
+
+    "extensions": {
+      "sigv4auth" : {
+        "region" : "eu-west-2",
+        "service" : "aps"
+      }
+    }
+
   })
   }
 
