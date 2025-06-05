@@ -333,7 +333,7 @@ data "aws_iam_policy_document" "role_policy_pipeline_role" {
       "aps:RemoteWrite",
     "aps:GetSeries",
     "aps:GetLabels",
-    "aps:GetMetricMetadata",
+    "aps:GetMetricMetadata", #add prometheus policy
       "aps:RemoteWrite",
       "ec2:DescribeTags"
     ]

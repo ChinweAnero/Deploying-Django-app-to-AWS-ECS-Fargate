@@ -6,6 +6,7 @@ env:
     FRONTEND_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
     CWAGENT_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo
     OTEL_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo
+    PROMETHUES_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring
 
 phases:
   pre_build:
@@ -40,6 +41,10 @@ phases:
       - docker build -t $CWAGENT_REPO_URL:$IMAGE_TAG -f cloudwatch-agent/Dockerfile ./cloudwatch-agent
       - docker tag $CWAGENT_REPO_URL:$IMAGE_TAG $CWAGENT_REPO_URL:latest
 
+      - echo building promethues image...
+      - docker build -t $PROMETHUES_REPO_URL:$IMAGE_TAG -f promethues-metrics/Dockerfile ./promethues-metrics
+      - docker tag $PROMETHUES_REPO_URL:$IMAGE_TAG $PROMETHUES_REPO_URL:latest
+
       - echo Building otel docker image
       - docker build -t $OTEL_REPO_URL:$IMAGE_TAG -f Otel_config/Dockerfile ./Otel_config
       - docker tag $OTEL_REPO_URL:$IMAGE_TAG $OTEL_REPO_URL:latest
@@ -53,6 +58,10 @@ phases:
       - echo Pushing cwagent image...
       - docker push $CWAGENT_REPO_URL:$IMAGE_TAG
       - docker push $CWAGENT_REPO_URL:latest
+
+      - echo Pushing promethues image
+      - docker push $PROMETHUES_REPO_URL:$IMAGE_TAG
+      - docker push $PROMETHUES_REPO_URL:latest
 
       - echo pushing otel image..
       - docker push $OTEL_REPO_URL:$IMAGE_TAG
