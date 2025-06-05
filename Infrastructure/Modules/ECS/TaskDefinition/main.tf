@@ -50,15 +50,15 @@ resource "aws_ecs_task_definition" "task_service" {
                 ClusterName = var.clusterName
               }
               metrics_destinations = {
-                  amp = {
-                    workspace_id = "ws-94d077b9-e437-41f7-81ab-120e6ed9fd16"
-                  }
+                amp = {
+                  workspace_id = "ws-94d077b9-e437-41f7-81ab-120e6ed9fd16"
                 }
               }
-            })
-         }
+            }
+          })
+        }
 
-        ],
+      ],
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -68,28 +68,49 @@ resource "aws_ecs_task_definition" "task_service" {
         }
       }
 
-        name      = "otel-collector"
-        image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo:latest"
-        essential = false
-        environment = [
-          {
-            name  = "AWS_REGION"
-            value = var.region
-          },
-          {
-            name  = "OTEL_CONFIG"
-            value = "/etc/otel-config.yaml"
-          }
-        ]
-        logConfiguration = {
-          logDriver = "awslogs"
-          options = {
-            awslogs-group         = var.otel_collector_log
-            awslogs-region        = var.region
-            awslogs-stream-prefix = "otel"
-          }
+      name      = "otel-collector"
+      image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo:latest"
+      essential = false
+      environment = [
+        {
+          name  = "AWS_REGION"
+          value = var.region
+        },
+        {
+          name  = "OTEL_CONFIG"
+          value = "/etc/otel-config.yaml"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = var.otel_collector_log
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "otel"
         }
       }
+    },
+
+    {
+      name      = "prometheus"
+      image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"
+      essential = false
+      portMappings = [
+        {
+          containerPort = 9090
+          hostPort      = 9090
+          protocol      = "tcp"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/prometheus"
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "prometheus"
+        }
+      }
+    }
   ])
 }
 
