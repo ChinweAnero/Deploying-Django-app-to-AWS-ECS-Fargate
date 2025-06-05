@@ -45,9 +45,6 @@ phases:
       - docker build -t $PROMETHUES_REPO_URL:$IMAGE_TAG -f promethues-metrics/Dockerfile ./promethues-metrics
       - docker tag $PROMETHUES_REPO_URL:$IMAGE_TAG $PROMETHUES_REPO_URL:latest
 
-      - echo Building otel docker image
-      - docker build -t $OTEL_REPO_URL:$IMAGE_TAG -f Otel_config/Dockerfile ./Otel_config
-      - docker tag $OTEL_REPO_URL:$IMAGE_TAG $OTEL_REPO_URL:latest
 
   post_build:
     commands:
@@ -63,9 +60,6 @@ phases:
       - docker push $PROMETHUES_REPO_URL:$IMAGE_TAG
       - docker push $PROMETHUES_REPO_URL:latest
 
-      - echo pushing otel image..
-      - docker push $OTEL_REPO_URL:$IMAGE_TAG
-      - docker push $OTEL_REPO_URL:latest
 
       - echo Updating task definition with new frontend image URI...
       - export IMAGE_URI=$FRONTEND_REPO_URL:$IMAGE_TAG

@@ -53,6 +53,4 @@ variable "aws_cloudwatch_agent_log_group_name" {
 variable "clusterName" {
   type = string
 }
-variable "otel_collector_log" {
-  type = string
-}
+
