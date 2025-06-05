@@ -116,6 +116,19 @@ module "target_group_client_green" {
   healthcheck_port = var.server_port
 }
 
+module "prometheus_target_group" {
+  source = "./Infrastructure/Modules/LoadBalancer"
+  name   = "prometheus-${var.environment}-target-group"
+  vpc_id = module.VPC.vpc_id
+  create_target_group = true
+  port = 9090
+  target_type = "ip"
+  protocol = "HTTP"
+  healthcheck_path = "/health/"
+  healthcheck_port = var.server_port
+
+}
+
 #****************************configuring load balancer for both client and server**************************#
 module "App_load_balancer_server" {
   source = "./Infrastructure/Modules/LoadBalancer"
@@ -138,6 +151,16 @@ module "App_load_balancer_client" {
 
   vpc_id = module.VPC.vpc_id
 
+}
+
+module "promethues_loadbalancer" {
+  source = "./Infrastructure/Modules/LoadBalancer"
+  name   = "Promethues-lb${var.environment}"
+  vpc_id = module.VPC.vpc_id
+  create_load_balancer = true
+  subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
+  sec_group = module.alb_frontend_Security_group.security_group_id
+  target_group_arn = module.prometheus_target_group.target_group_arn
 }
 
 #****************creating the s3 bucket**********************************#
@@ -254,6 +277,13 @@ module "frontend_ecs_security_group" {
   ingress_port = var.frontend_port
 
 }
+module "promethues_ecs_security_group" {
+  source = "./Infrastructure/Modules/Security_Group"
+  name = "promethues-ecs-security_group${var.environment}"
+  vpc_id = module.VPC.vpc_id
+  security_group = [module.alb_frontend_Security_group.security_group_id]
+  ingress_port = 9090
+}
 
 #*************ecs cluster**************************************************#
 module "cluster_ecs" {
@@ -273,10 +303,7 @@ module "backend_ecs_service" {
   subnets = [module.VPC.private_subnet_backend_[0], module.VPC.private_subnet_backend_[1]]
   taskdef         = module.backend_ecs_task_definition.taskDef_arn
   depends_on = [module.App_load_balancer_server]
-
   alb_arn = module.server_target_group_blue.target_group_arn
-
-
 
 }
 module "frontend_ecs_service" {
@@ -292,6 +319,22 @@ module "frontend_ecs_service" {
   depends_on = [module.App_load_balancer_client]
 
   alb_arn         = module.target_group_client_blue.target_group_arn
+
+}
+
+module "promethues_ecs_service" {
+  source = "./Infrastructure/Modules/ECS/Service"
+  alb_arn = module.prometheus_target_group.target_group_arn
+  cluster_id = module.cluster_ecs.cluster_id
+  container_name = "prometheus"
+  container_port = 9090
+  desired_count = 1
+  name = "promethues-ecs${var.environment}"
+  security_groups = module.alb_frontend_Security_group.security_group_id
+  subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
+  taskdef = module.frontend_ecs_task_definition.taskDef_arn
+  depends_on = [module.App_load_balancer_client]
+
 }
 
 #********************************Autoscaling policies for ecs *********************************************#

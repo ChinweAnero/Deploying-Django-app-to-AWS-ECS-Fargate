@@ -21,6 +21,12 @@ resource "aws_ecs_service" "ecs_service" {
     container_port   = var.container_port
   }
 
+  load_balancer {
+    target_group_arn = var.alb_arn
+    container_name   = var.container_name
+    container_port   = var.container_port
+  }
+
   deployment_controller {
     type = "CODE_DEPLOY"
   }
