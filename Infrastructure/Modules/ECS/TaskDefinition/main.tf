@@ -66,32 +66,8 @@ resource "aws_ecs_task_definition" "task_service" {
           awslogs-region        = var.region,
           awslogs-stream-prefix = "cwagent"
         }
-      }
+      },
 
-      name      = "otel-collector"
-      image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo:latest"
-      essential = false
-      environment = [
-        {
-          name  = "AWS_REGION"
-          value = var.region
-        },
-        {
-          name  = "OTEL_CONFIG"
-          value = "/etc/otel-config.yaml"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = var.otel_collector_log
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "otel"
-        }
-      }
-    },
-
-    {
       name      = "prometheus"
       image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"
       essential = false

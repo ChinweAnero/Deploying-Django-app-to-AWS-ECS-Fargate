@@ -159,10 +159,6 @@ module "cwagent_ecr_repo" {
   erc_name = "cloudwatch-agent-ecr-repo"
 }
 
-module "otel_ecr_repo" {
-  source = "./Infrastructure/Modules/ECR"
-  erc_name = "otel-config-repo"
-}
 
 module "promethues_repo" {
   source = "./Infrastructure/Modules/ECR"
@@ -219,7 +215,7 @@ module "backend_ecs_task_definition" {
   aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
   aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
   clusterName = module.cluster_ecs.name_of_cluster
-  otel_collector_log                  = module.otel_collector_logs.cloudwatch_agent_log_group_name
+
 
 }
 module "frontend_ecs_task_definition" {
@@ -239,7 +235,7 @@ module "frontend_ecs_task_definition" {
   aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
   aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
   clusterName                         = module.cluster_ecs.name_of_cluster
-  otel_collector_log                  = module.otel_collector_logs.cloudwatch_agent_log_group_name
+
 }
 
 #*******************security group for ecs tasks*****************************#
@@ -500,10 +496,6 @@ module "prometheus_workspace" {
   prometheus_workspace = "workspace"
 }
 
-module "otel_collector_logs" {
-  source = "./Infrastructure/Modules/Cloudwatch Log Group"
-  cloudwatch_log_group_name = "otel/collector"
-}
 
 
 module "prometheus_log_group" {
