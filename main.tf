@@ -353,7 +353,7 @@ module "policy_for_pipeline_role" {
   create_pipeline_policy = true
   attach_with_role = module.pipeline_role.ecs_name_
   create_ecs_policy = true
-  ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn, module.cwagent_ecr_repo.ecr_repo_arn, module.otel_ecr_repo.ecr_repo_arn, module.promethues_repo.ecr_repo_arn]
+  ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn, module.cwagent_ecr_repo.ecr_repo_arn,  module.promethues_repo.ecr_repo_arn]
   codebuild_projects = [module.codebuild_backend.project_arn, module.codebuild_frontend.project_arn]
   code_deploy_projects = [module.codedeploy_backend.application_arn, module.codedeploy_backend.deployment_group_arn, module.codedeploy_frontend.application_arn, module.codedeploy_frontend.deployment_group_arn]
   codedeploy_role_name = ""
