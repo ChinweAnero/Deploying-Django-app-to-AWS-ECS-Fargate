@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "task_service" {
               }
               metrics_destinations = {
                 amp = {
-                  workspace_id = "ws-94d077b9-e437-41f7-81ab-120e6ed9fd16"
+                  workspace_id = "ws-bf41a33b-432c-4dd1-a13e-1190f41384dd"
                 }
               }
             }

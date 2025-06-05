@@ -490,7 +490,7 @@ module "cloudwatch_agent" {
 
 #cloudwatch_agent_log_group
 module "cloudwatch_agent_log_group" {
-  source = "./Infrastructure/Modules/Cloudwatch Agent Log Group"
+  source = "./Infrastructure/Modules/Cloudwatch Log Group"
   cloudwatch_log_group_name = "/ecs/cwagent"
 
 }
@@ -501,9 +501,12 @@ module "prometheus_workspace" {
 }
 
 module "otel_collector_logs" {
-  source = "./Infrastructure/Modules/Cloudwatch Agent Log Group"
+  source = "./Infrastructure/Modules/Cloudwatch Log Group"
   cloudwatch_log_group_name = "otel/collector"
 }
 
 
-
+module "prometheus_log_group" {
+  source = "./Infrastructure/Modules/Cloudwatch Log Group"
+  cloudwatch_log_group_name = "/ecs/prometheus"
+}
