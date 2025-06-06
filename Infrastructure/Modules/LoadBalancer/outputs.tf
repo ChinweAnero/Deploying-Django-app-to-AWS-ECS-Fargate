@@ -13,6 +13,10 @@ output "target_group_name" {
   ? (length(aws_lb_target_group.ip_target_group) > 0 ? aws_lb_target_group.ip_target_group[0].name : "") : "")
 }
 
+# output "ip_target_group" {
+#   value = aws_lb_target_group.ip_target_group
+# }
+
 output "listener_arn" {
   value = (var.create_load_balancer == true
   ? (length(aws_lb_listener.http) > 0 ? aws_lb_listener.http[0].arn : "") : "")

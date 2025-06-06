@@ -68,8 +68,8 @@ variable "create_target_group" {
   default = false
   description = "determines if a target group needs to be created"
 }
-variable "target_group_green" {
-  type = string
-  default = ""
-  description = "the arn for the target group"
-}
+# variable "target_group_green" {
+#   type = string
+#   default = ""
+#   description = "the arn for the target group"
+# }
