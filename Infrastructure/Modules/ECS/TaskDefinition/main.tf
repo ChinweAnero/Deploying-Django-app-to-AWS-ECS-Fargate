@@ -83,11 +83,11 @@ resource "aws_ecs_task_definition" "task_service" {
           awslogs-region        = var.region
           awslogs-stream-prefix = "prometheus"
         }
-         authorization_config = {
+      }
+      authorization_config = {
            credentials_parameter = "arn:aws:secretsmanager:eu-west-2:707798379596:secret:dockerhub-credentials-nOk8mq"
 
         }
-      }
     }
   ])
 }
