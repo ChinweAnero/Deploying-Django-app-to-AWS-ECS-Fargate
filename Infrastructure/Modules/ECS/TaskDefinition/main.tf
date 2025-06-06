@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "task_service" {
     },
     {
       name      = "prometheus"
-      image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"
+      image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring/prometheus:latest"
       essential = false
       portMappings = [
         {
