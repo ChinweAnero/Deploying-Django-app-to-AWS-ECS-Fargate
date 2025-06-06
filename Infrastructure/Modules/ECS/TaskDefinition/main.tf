@@ -68,7 +68,7 @@ resource "aws_ecs_task_definition" "task_service" {
     {
       name      = "prometheus"
       image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"
-      essential = false
+      essential = true
       portMappings = [
         {
           containerPort = 9090
