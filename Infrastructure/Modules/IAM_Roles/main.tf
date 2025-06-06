@@ -393,6 +393,14 @@ data "aws_iam_policy_document" "role_policy_for_ecs_tasks" {
     ]
     resources = ["*"]
   }
+  statement {
+    sid    = "AllowSecretsManagerActions"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+    resources = ["arn:aws:secretsmanager:eu-west-2:707798379596:secret:dockerhub-credentials-nOk8mq"]
+  }
 
 }
 
