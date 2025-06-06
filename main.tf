@@ -134,9 +134,31 @@ module "target_group_client_green" {
   healthcheck_port = var.server_port
 }
 
-module "prometheus_target_group" {
+
+ # import {
+ #   to = module.prometheus_target_group_blue.aws_lb_target_group.ip_target_group[0]
+ #   id = module.prometheus_target_group_blue.aws_lb_target_group.arn
+ # }
+module "prometheus_target_group_blue" {
   source = "./Infrastructure/Modules/LoadBalancer"
-  name   = "prometheus-${var.environment}-target-group"
+  name   = "prometheus-${var.environment}-target-group-b"
+  vpc_id = module.VPC.vpc_id
+  create_target_group = true
+  port = 9090
+  target_type = "ip"
+  protocol = "HTTP"
+  healthcheck_path = "/metrics"
+  healthcheck_port = var.server_port
+
+}
+
+# import {
+#    to = module.prometheus_target_group_green.aws_lb_target_group.ip_target_group[0]
+#    id = module.prometheus_target_group_green.aws_lb_target_group.arn
+#  }
+module "prometheus_target_group_green" {
+  source = "./Infrastructure/Modules/LoadBalancer"
+  name   = "prometheus-${var.environment}-target-group-g"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
   port = 9090
@@ -178,7 +200,7 @@ module "prometheus_loadbalancer" {
   create_load_balancer = true
   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
   sec_group = module.prometheus_security_group.security_group_id
-  target_group_arn = module.prometheus_target_group.target_group_arn
+  target_group_arn = module.prometheus_target_group_blue.target_group_arn
 }
 
 #****************creating the s3 bucket**********************************#
@@ -342,7 +364,7 @@ module "frontend_ecs_service" {
 
 module "prometheus_ecs_service" {
   source = "./Infrastructure/Modules/ECS/Service"
-  alb_arn = module.prometheus_target_group.target_group_arn
+  alb_arn = module.prometheus_target_group_blue.target_group_arn
   cluster_id = module.cluster_ecs.cluster_id
   container_name = "prometheus"
   container_port = 9090
@@ -485,6 +507,19 @@ module "codedeploy_frontend" {
   green_target_group = module.target_group_client_green.target_group_name
   name = "client-codedeploy-${var.environment}"
   service_name = module.frontend_ecs_service.ecs_name
+  service_role_arn = module.codedeploy_iam_role.codedeploy_arn
+  sns_topic_arn = module.sns_topic.sns_arn
+  trigger_name = var.trigger_name
+}
+
+module "prometheus_code_deploy" {
+  source = "./Infrastructure/Modules/CodeDeploy"
+  aws_lb_listener = module.prometheus_loadbalancer.listener_arn
+  blue_target_group = module.prometheus_target_group_blue.target_group_name
+  cluster_name = module.cluster_ecs.name_of_cluster
+  green_target_group = module.prometheus_target_group_green.target_group_name
+  name = "prometheus_deploy"
+  service_name = module.prometheus_ecs_service.ecs_name
   service_role_arn = module.codedeploy_iam_role.codedeploy_arn
   sns_topic_arn = module.sns_topic.sns_arn
   trigger_name = var.trigger_name
