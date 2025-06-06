@@ -142,7 +142,7 @@ module "prometheus_target_group" {
   port = 9090
   target_type = "ip"
   protocol = "HTTP"
-  healthcheck_path = "/health/"
+  healthcheck_path = "/metrics"
   healthcheck_port = var.server_port
 
 }
