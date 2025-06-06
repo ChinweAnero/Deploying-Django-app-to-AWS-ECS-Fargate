@@ -44,7 +44,7 @@ phases:
 
       - echo building promethues image...
       - docker pull $PROM_DOCKER_IMAGE_NAME:latest
-      - docker tag $PROMETHUES_REPO_URL:$IMAGE_TAG $PROMETHUES_REPO_URL:latest
+      - docker tag $PROM_DOCKER_IMAGE_NAME:$IMAGE_TAG $PROMETHUES_REPO_URL:latest
 
 
 
