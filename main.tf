@@ -58,6 +58,24 @@ module "alb_frontend_sec_group_rule" {
   type = "ingress"
 }
 
+module "prometheus_security_group" {
+  source = "./Infrastructure/Modules/Security_Group"
+  vpc_id = module.VPC.vpc_id
+  ingress_cidr_block = ["0.0.0.0/0"]
+  ingress_port = 8000
+  name = "promethues-sec_group${var.environment}"
+
+}
+module "prometheus_security_group-rule" {
+  source = "./Infrastructure/Modules/Security Group Rules"
+  cidr_blocks = ["0.0.0.0/0"]
+  protocol = "tcp"
+  from_port = 9090
+  to_port = 9090
+  security_group_id = module.prometheus_security_group.security_group_id
+  type = "ingress"
+}
+
 module "alb_backend_Security_group" {
   source = "./Infrastructure/Modules/Security_Group"
   vpc_id         = module.VPC.vpc_id
@@ -153,13 +171,13 @@ module "App_load_balancer_client" {
 
 }
 
-module "promethues_loadbalancer" {
+module "prometheus_loadbalancer" {
   source = "./Infrastructure/Modules/LoadBalancer"
   name   = "Promethues-lb${var.environment}"
   vpc_id = module.VPC.vpc_id
   create_load_balancer = true
   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
-  sec_group = module.alb_frontend_Security_group.security_group_id
+  sec_group = module.prometheus_security_group.security_group_id
   target_group_arn = module.prometheus_target_group.target_group_arn
 }
 
@@ -281,7 +299,7 @@ module "promethues_ecs_security_group" {
   source = "./Infrastructure/Modules/Security_Group"
   name = "promethues-ecs-security_group${var.environment}"
   vpc_id = module.VPC.vpc_id
-  security_group = [module.alb_frontend_Security_group.security_group_id]
+  security_group = [module.prometheus_security_group.security_group_id]
   ingress_port = 9090
 }
 
@@ -322,7 +340,7 @@ module "frontend_ecs_service" {
 
 }
 
-module "promethues_ecs_service" {
+module "prometheus_ecs_service" {
   source = "./Infrastructure/Modules/ECS/Service"
   alb_arn = module.prometheus_target_group.target_group_arn
   cluster_id = module.cluster_ecs.cluster_id
@@ -330,10 +348,10 @@ module "promethues_ecs_service" {
   container_port = 9090
   desired_count = 1
   name = "promethues-ecs${var.environment}"
-  security_groups = module.alb_frontend_Security_group.security_group_id
+  security_groups = module.prometheus_security_group.security_group_id
   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
   taskdef = module.frontend_ecs_task_definition.taskDef_arn
-  depends_on = [module.App_load_balancer_client]
+  depends_on = [module.prometheus_loadbalancer.load_balancer_arn]
 
 }
 
