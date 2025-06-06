@@ -45,6 +45,7 @@ phases:
       - echo building promethues image...
       - docker pull $PROM_DOCKER_IMAGE_NAME:latest
       - docker tag $PROM_DOCKER_IMAGE_NAME:latest $PROMETHUES_REPO_URL:latest
+      - docker tag $PROM_DOCKER_IMAGE_NAME:latest $PROMETHUES_REPO_URL:$IMAGE_TAG
 
 
 
@@ -60,8 +61,9 @@ phases:
       - docker push $CWAGENT_REPO_URL:latest
 
       - echo Pushing promethues image
-      - docker push $PROMETHUES_REPO_URL:$IMAGE_TAG
       - docker push $PROMETHUES_REPO_URL:latest
+      - docker push $PROMETHUES_REPO_URL:$IMAGE_TAG
+
 
 
       - echo Updating task definition with new frontend image URI...
