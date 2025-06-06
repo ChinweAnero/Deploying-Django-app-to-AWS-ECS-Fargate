@@ -22,6 +22,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $FRONTEND_REPO_URL
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $CWAGENT_REPO_URL
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin PROMETHUES_REPO_URL
 
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${IMAGE_TAG:-latest}
