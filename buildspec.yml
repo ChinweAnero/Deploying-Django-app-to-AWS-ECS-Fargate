@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     AWS_REGION: eu-west-2
-    PROM_DOCKER_IMAGE_NAME: "prometheus"
+    PROM_DOCKER_IMAGE_NAME: "prom/prometheus"
     FRONTEND_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
     CWAGENT_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo
     OTEL_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo
