@@ -5,7 +5,6 @@ env:
     AWS_REGION: eu-west-2
     PROM_DOCKER_IMAGE_NAME: "prom/prometheus"
     FRONTEND_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/frontend-ecr-repo
-    CWAGENT_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo
     OTEL_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/otel-config-repo
     PROMETHUES_REPO_URL: 707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring
 
@@ -21,7 +20,6 @@ phases:
 
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $FRONTEND_REPO_URL
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $CWAGENT_REPO_URL
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $PROMETHUES_REPO_URL
 
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -39,10 +37,6 @@ phases:
       - docker build -t $FRONTEND_REPO_URL:$IMAGE_TAG -f Dockerfile .
       - docker tag $FRONTEND_REPO_URL:$IMAGE_TAG $FRONTEND_REPO_URL:latest
 
-      - echo Building cwagent Docker image...
-      - docker build -t $CWAGENT_REPO_URL:$IMAGE_TAG -f cloudwatch-agent/Dockerfile ./cloudwatch-agent
-      - docker tag $CWAGENT_REPO_URL:$IMAGE_TAG $CWAGENT_REPO_URL:latest
-
       - echo building promethues image...
       - docker pull $PROM_DOCKER_IMAGE_NAME:latest
       - docker tag $PROM_DOCKER_IMAGE_NAME:latest $PROMETHUES_REPO_URL:latest
@@ -57,9 +51,6 @@ phases:
       - docker push $FRONTEND_REPO_URL:$IMAGE_TAG
       - docker push $FRONTEND_REPO_URL:latest
 
-      - echo Pushing cwagent image...
-      - docker push $CWAGENT_REPO_URL:$IMAGE_TAG
-      - docker push $CWAGENT_REPO_URL:latest
 
       - echo Pushing promethues image
       - docker push $PROMETHUES_REPO_URL:latest

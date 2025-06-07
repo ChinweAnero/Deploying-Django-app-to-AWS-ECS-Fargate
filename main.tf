@@ -147,7 +147,7 @@ module "prometheus_target_group_blue" {
   port = 9090
   target_type = "ip"
   protocol = "HTTP"
-  healthcheck_path = "/health/"
+  healthcheck_path = "/"
   healthcheck_port = var.server_port
 
 }
@@ -164,7 +164,7 @@ module "prometheus_target_group_green" {
   port = 9090
   target_type = "ip"
   protocol = "HTTP"
-  healthcheck_path = "/health/"
+  healthcheck_path = "/"
   healthcheck_port = var.server_port
 
 }
@@ -200,6 +200,16 @@ module "prometheus_loadbalancer" {
   create_load_balancer = true
   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
   sec_group = module.prometheus_security_group.security_group_id
+  target_group_arn = module.prometheus_target_group_green.target_group_arn
+}
+
+module "prometheus_loadbalancer-b" {
+  source = "./Infrastructure/Modules/LoadBalancer"
+  name   = "Promethues-lb${var.environment}-b"
+  vpc_id = module.VPC.vpc_id
+  create_load_balancer = true
+  subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
+  sec_group = module.prometheus_security_group.security_group_id
   target_group_arn = module.prometheus_target_group_blue.target_group_arn
 }
 
@@ -217,11 +227,6 @@ module "backend_ecr" {
   source = "./Infrastructure/Modules/ECR"
   erc_name = "backend-ecr-repo"
 }
-module "cwagent_ecr_repo" {
-  source = "./Infrastructure/Modules/ECR"
-  erc_name = "cloudwatch-agent-ecr-repo"
-}
-
 
 module "promethues_repo" {
   source = "./Infrastructure/Modules/ECR"
@@ -275,8 +280,7 @@ module "backend_ecs_task_definition" {
   name_of_container = var.container_name_backend
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
-  aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
-  aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
+
   clusterName = module.cluster_ecs.name_of_cluster
 
 
@@ -295,9 +299,7 @@ module "frontend_ecs_task_definition" {
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
 
-  aws_cloudwatch_agent_log_group_name = module.cloudwatch_agent_log_group.cloudwatch_agent_log_group_name
-  aws_ssm_parameter_value             = module.cloudwatch_agent.parameter_store_value
-  clusterName                         = module.cluster_ecs.name_of_cluster
+  clusterName  = module.cluster_ecs.name_of_cluster
 
 }
 
@@ -436,7 +438,7 @@ module "policy_for_pipeline_role" {
   create_pipeline_policy = true
   attach_with_role = module.pipeline_role.ecs_name_
   create_ecs_policy = true
-  ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn, module.cwagent_ecr_repo.ecr_repo_arn,  module.promethues_repo.ecr_repo_arn]
+  ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn,   module.promethues_repo.ecr_repo_arn]
   codebuild_projects = [module.codebuild_backend.project_arn, module.codebuild_frontend.project_arn]
   code_deploy_projects = [module.codedeploy_backend.application_arn, module.codedeploy_backend.deployment_group_arn, module.codedeploy_frontend.application_arn, module.codedeploy_frontend.deployment_group_arn]
   codedeploy_role_name = ""
@@ -512,19 +514,6 @@ module "codedeploy_frontend" {
   trigger_name = var.trigger_name
 }
 
-module "prometheus_code_deploy" {
-  source = "./Infrastructure/Modules/CodeDeploy"
-  aws_lb_listener = module.prometheus_loadbalancer.listener_arn
-  blue_target_group = module.prometheus_target_group_blue.target_group_name
-  cluster_name = module.cluster_ecs.name_of_cluster
-  green_target_group = module.prometheus_target_group_green.target_group_name
-  name = "prometheus_deploy"
-  service_name = module.prometheus_ecs_service.ecs_name
-  service_role_arn = module.codedeploy_iam_role.codedeploy_arn
-  sns_topic_arn = module.sns_topic.sns_arn
-  trigger_name = var.trigger_name
-}
-
 #**************sns topic**********************#
 module "sns_topic" {
   source = "./Infrastructure/Modules/SNS"
@@ -561,40 +550,18 @@ module "codepipeline" {
   connection_arn     = module.codestar_connection_to_github.codestar_arn
 
 }
-
 # import {
-#   to = module.cloudwatch_agent.aws_ssm_parameter.cloudwatch_agent
-#   id = "/cwagent/config/prometheus"
+#   id = ""
+#   to = module.prometheus_log_group.aws_cloudwatch_log_group.prometheus_log_group
 # }
-
-#cloudwatch_agent
-module "cloudwatch_agent" {
-  source = "./Infrastructure/Modules/Cloudwatch_agent"
-  cloudwatch_agent_name = "/cwagent/config/prometheus"
-  cloudwatch_agent_type = "String"
-  clusterName = module.cluster_ecs.name_of_cluster
-  promethues_workspace_id = module.prometheus_workspace.workspace_id
-}
-# import {
-#   to = module.cloudwatch_agent_log_group.aws_cloudwatch_log_group.cwagent_logs
-#   id = "/ecs/cwagent"
-# }
-
-#cloudwatch_agent_log_group
-module "cloudwatch_agent_log_group" {
-  source = "./Infrastructure/Modules/Cloudwatch Log Group"
-  cloudwatch_log_group_name = "/ecs/cwagent"
-
-}
-
-module "prometheus_workspace" {
-  source = "./Infrastructure/Modules/Prometheus Workspace"
-  prometheus_workspace = "workspace"
-}
-
-
-
 module "prometheus_log_group" {
-  source = "./Infrastructure/Modules/Cloudwatch Log Group"
-  cloudwatch_log_group_name = "/ecs/prometheus"
+  source = "./Infrastructure/Modules/Prometheus-CW_log"
+  log_group_name = "/ecs/prometheus"
+}
+
+module "parameter_store" {
+  source = "./Infrastructure/Modules/Parameter Store"
+  clusterName = module.cluster_ecs.name_of_cluster
+  name = "parameter_store"
+  type = "SecureString"
 }
