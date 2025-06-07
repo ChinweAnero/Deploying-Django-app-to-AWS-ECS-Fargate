@@ -27,44 +27,7 @@ resource "aws_ecs_task_definition" "task_service" {
         }
       }
     },
-    {
-      name      = "cwagent"
-      image     = "amazon/cloudwatch-agent:latest"
-      essential = false
-      environment = [
-        {
-          name  = "CW_CONFIG_CONTENT"
-          value = jsonencode({
-            agent = {
-              region = "eu-west-2"
-            }
-            metrics = {
-              metrics_collected = {
-                prometheus = {
-                  prometheus_config_path = "/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml"
-                }
-              }
-              append_dimensions = {
-                ClusterName = var.clusterName
-              }
-              metrics_destinations = {
-                amp = {
-                  workspace_id = "ws-bf41a33b-432c-4dd1-a13e-1190f41384dd"
-                }
-              }
-            }
-          })
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = var.aws_cloudwatch_agent_log_group_name
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "cwagent"
-        }
-      }
-    },
+    
     {
       name      = "prometheus"
       image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"

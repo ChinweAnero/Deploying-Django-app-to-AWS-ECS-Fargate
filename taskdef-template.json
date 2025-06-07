@@ -32,25 +32,6 @@
         }
       }
     },
-    {
-      "name": "cwagent",
-      "image": "707798379596.dkr.ecr.eu-west-2.amazonaws.com/cloudwatch-agent-ecr-repo:latest",
-      "essential": false,
-      "environment": [
-        {
-          "name": "CW_CONFIG_CONTENT",
-          "value": "{\"metrics\":{\"metrics_collected\":{\"prometheus\":{\"prometheus_config_path\":\"/opt/aws/amazon-cloudwatch-agent/etc/prometheus.yml\"}},\"metrics_destinations\":{\"amp\":{\"workspace_id\":\"ws-bf41a33b-432c-4dd1-a13e-1190f41384dd\"}},\"append_dimensions\":{\"ClusterName\":\"esc-prod-cluster\"}}}"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/cwagent",
-          "awslogs-region": "eu-west-2",
-          "awslogs-stream-prefix": "cwagent"
-        }
-      }
-    },
 
     {
       "name":  "prometheus",

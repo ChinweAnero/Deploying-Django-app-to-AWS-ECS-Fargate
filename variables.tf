@@ -107,7 +107,4 @@ variable "codestar_github_name" {
   description = "name of the codestar resource"
   default = "connect_github"
 }
-variable "create_target_group" {
-  type = bool
-  default = true
-}
+
