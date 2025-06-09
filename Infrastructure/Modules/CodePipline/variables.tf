@@ -48,7 +48,7 @@ variable "AppName_frontend" {
   type = string
   description = "name of the application"
 }
-variable "PromappName_frontend" {
+variable "PromappName" {
   type = string
   description = "name of prometheus application"
 }
@@ -56,7 +56,7 @@ variable "DeploymentGroup_frontend" {
   type = string
   description = "name of the deployment group"
 }
-variable "PromDeploymentGroup_frontend" {
+variable "PromDeploymentGroup" {
   type = string
   description = "prometheus deployment group"
 }
