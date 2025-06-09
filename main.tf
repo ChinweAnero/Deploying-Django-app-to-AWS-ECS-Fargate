@@ -193,16 +193,6 @@ module "App_load_balancer_client" {
 
 }
 
-module "prometheus_loadbalancer" {
-  source = "./Infrastructure/Modules/LoadBalancer"
-  name   = "Promethues-lb${var.environment}"
-  vpc_id = module.VPC.vpc_id
-  create_load_balancer = true
-  subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
-  sec_group = module.prometheus_security_group.security_group_id
-  target_group_arn = module.prometheus_target_group_blue.target_group_arn
-}
-
 module "prometheus_loadbalancer-b" {
   source = "./Infrastructure/Modules/LoadBalancer"
   name   = "Promethues-lb${var.environment}-b"
@@ -375,7 +365,7 @@ module "prometheus_ecs_service" {
   security_groups = module.prometheus_security_group.security_group_id
   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
   taskdef = module.frontend_ecs_task_definition.taskDef_arn
-  depends_on = [module.prometheus_loadbalancer.load_balancer_arn]
+  depends_on = [module.prometheus_loadbalancer-b.load_balancer_arn]
 
 }
 
@@ -493,7 +483,7 @@ module "codebuild_frontend" {
 module "codebuild_prometheus" {
   source = "./Infrastructure/Modules/CodeBuild"
   aws_account_id = data.aws_caller_identity.current.account_id
-  backend_lb_url = module.prometheus_loadbalancer.load_balancer_arn
+  backend_lb_url = module.prometheus_loadbalancer-b.load_balancer_dns
   build_spec = var.build_spec
   container_name = var.prometheus_container
   dynamodb_table = ""
@@ -534,7 +524,7 @@ module "codedeploy_frontend" {
 }
 module "prometheus_codedeploy" {
   source = "./Infrastructure/Modules/CodeDeploy"
-  aws_lb_listener    = module.prometheus_loadbalancer.listener_arn
+  aws_lb_listener    = module.prometheus_loadbalancer-b.listener_arn
   blue_target_group  = module.prometheus_target_group_blue.target_group_name
   cluster_name       = module.cluster_ecs.name_of_cluster
   green_target_group = module.prometheus_target_group_green.target_group_name
