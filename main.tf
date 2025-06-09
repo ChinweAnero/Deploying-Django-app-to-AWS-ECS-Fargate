@@ -580,8 +580,8 @@ module "codepipeline" {
   depends_on = [module.policy_for_pipeline_role]
   connection_arn     = module.codestar_connection_to_github.codestar_arn
   PromprojectName_frontend = module.prometheus_codedeploy.deployment_group_name
-  PromappName_frontend = module.prometheus_codedeploy.app_name
-  PromDeploymentGroup_frontend = module.prometheus_codedeploy.deployment_group_name
+  PromappName = module.prometheus_codedeploy.app_name
+  PromDeploymentGroup = module.prometheus_codedeploy.deployment_group_name
 }
 # import {
 #   id = ""
