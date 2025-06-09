@@ -32,7 +32,7 @@ variable "ProjectName_frontend" {
   type = string
   description = "name of the project"
 }
-variable "PromprojectName_frontend" {
+variable "PromprojectName" {
   type = string
   description = "name of pipeline project"
 }
