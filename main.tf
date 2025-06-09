@@ -147,7 +147,7 @@ module "prometheus_target_group_blue" {
   port = 9090
   target_type = "ip"
   protocol = "HTTP"
-  healthcheck_path = "/health/"
+  healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
 
 }
@@ -164,7 +164,7 @@ module "prometheus_target_group_green" {
   port = 9090
   target_type = "ip"
   protocol = "HTTP"
-  healthcheck_path = "/health/"
+  healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
 
 }
