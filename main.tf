@@ -487,6 +487,25 @@ module "codebuild_frontend" {
   service_port = var.frontend_port
   service_role_arn = module.pipeline_role.role_arn
   task_definition_family = module.frontend_ecs_task_definition.taskDef_family
+
+}
+
+module "codebuild_prometheus" {
+  source = "./Infrastructure/Modules/CodeBuild"
+  aws_account_id = data.aws_caller_identity.current.account_id
+  backend_lb_url = module.prometheus_loadbalancer.load_balancer_arn
+  build_spec = var.build_spec
+  container_name = var.prometheus_container
+  dynamodb_table = ""
+  ecs_role = var.iam_for_cicd["ecs"]
+  ecs_task_role = module.role_for_ecs.ecs_task_role_name
+  folder_path = var.prometheus_folder_path
+  name = "codebuild-prometheus-${var.environment}"
+  region_aws = var.aws_region
+  repo_url = module.promethues_repo.ecr_repo_url
+  service_port = 9090
+  service_role_arn = module.pipeline_role.role_arn
+  task_definition_family = module.frontend_ecs_task_definition.taskDef_family
 }
 ## codedeploy projects###
 module "codedeploy_backend" {
@@ -512,6 +531,18 @@ module "codedeploy_frontend" {
   service_role_arn = module.codedeploy_iam_role.codedeploy_arn
   sns_topic_arn = module.sns_topic.sns_arn
   trigger_name = var.trigger_name
+}
+module "prometheus_codedeploy" {
+  source = "./Infrastructure/Modules/CodeDeploy"
+  aws_lb_listener    = module.prometheus_loadbalancer.listener_arn
+  blue_target_group  = module.prometheus_target_group_blue.target_group_name
+  cluster_name       = module.cluster_ecs.name_of_cluster
+  green_target_group = module.prometheus_target_group_green.target_group_name
+  name               = "prom-codedeploy-${var.environment}"
+  service_name       = module.prometheus_ecs_service
+  service_role_arn   = module.codedeploy_iam_role.codedeploy_arn
+  sns_topic_arn      = module.sns_topic.sns_arn
+  trigger_name       = var.trigger_name
 }
 
 #**************sns topic**********************#
