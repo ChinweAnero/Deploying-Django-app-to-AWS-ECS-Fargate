@@ -70,7 +70,7 @@ resource "aws_codepipeline" "codepipeline" {
       version  = "1"
 
       configuration = {
-        ProjectName = var.PromprojectName_frontend
+        ProjectName = var.PromprojectName
       }
     }
   }
@@ -124,11 +124,11 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         TaskDefinitionTemplatePath     = "prometheus-taskdef.json"
-        AppSpecTemplateArtifact        = "BuildArtifact_frontend"
+        AppSpecTemplateArtifact        = "BuildArtifact_prometheus"
         AppSpecTemplatePath            = "prometheus-appspec.json"
         ApplicationName              = var.PromappName
         DeploymentGroupName            = var.PromDeploymentGroup
-        TaskDefinitionTemplateArtifact = "BuildArtifact_frontend"
+        TaskDefinitionTemplateArtifact = "BuildArtifact_prometheus"
       }
     }
   }
