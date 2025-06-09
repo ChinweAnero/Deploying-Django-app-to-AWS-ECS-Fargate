@@ -539,7 +539,7 @@ module "prometheus_codedeploy" {
   cluster_name       = module.cluster_ecs.name_of_cluster
   green_target_group = module.prometheus_target_group_green.target_group_name
   name               = "prom-codedeploy-${var.environment}"
-  service_name       = module.prometheus_ecs_service
+  service_name       = module.prometheus_ecs_service.ecs_name
   service_role_arn   = module.codedeploy_iam_role.codedeploy_arn
   sns_topic_arn      = module.sns_topic.sns_arn
   trigger_name       = var.trigger_name
