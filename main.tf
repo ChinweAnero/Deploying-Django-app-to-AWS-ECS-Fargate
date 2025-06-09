@@ -365,7 +365,7 @@ module "prometheus_ecs_service" {
   security_groups = module.prometheus_security_group.security_group_id
   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
   taskdef = module.frontend_ecs_task_definition.taskDef_arn
-  depends_on = [module.prometheus_loadbalancer.load_balancer_arn]
+  depends_on = [module.prometheus_loadbalancer-b.load_balancer_arn]
 
 }
 
