@@ -52,6 +52,7 @@ resource "aws_codedeploy_deployment_group" "deployment-group" {
       target_group {
         name = var.green_target_group
       }
+
     }
   }
 
