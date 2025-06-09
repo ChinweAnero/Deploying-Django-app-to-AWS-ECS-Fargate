@@ -56,6 +56,19 @@ resource "aws_codepipeline" "codepipeline" {
       version          = "1"
 
       configuration = {
+        ProjectName = var.PromprojectName_frontend
+      }
+    }
+    action {
+      name     = "Build_prometheus"
+      category = "Build"
+      owner    = "AWS"
+      provider = "CodeBuild"
+      input_artifacts = ["SourceOutput"]
+      output_artifacts = ["BuildArtifact_prometheus"]
+      version  = "1"
+
+      configuration = {
         ProjectName = var.ProjectName_frontend
       }
     }
@@ -97,6 +110,23 @@ resource "aws_codepipeline" "codepipeline" {
         AppSpecTemplatePath            = "appspec.json"
         ApplicationName              = var.AppName_frontend
         DeploymentGroupName            = var.DeploymentGroup_frontend
+        TaskDefinitionTemplateArtifact = "BuildArtifact_frontend"
+      }
+    }
+    action {
+      name            = "Deploy_prometheus"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "CodeDeployToECS"
+      input_artifacts = ["BuildArtifact_prometheus"]
+      version         = "1"
+
+      configuration = {
+        TaskDefinitionTemplatePath     = "prometheus-taskdef.json"
+        AppSpecTemplateArtifact        = "BuildArtifact_frontend"
+        AppSpecTemplatePath            = "prometheus-appspec.json"
+        ApplicationName              = var.PromappName_frontend
+        DeploymentGroupName            = var.PromDeploymentGroup_frontend
         TaskDefinitionTemplateArtifact = "BuildArtifact_frontend"
       }
     }

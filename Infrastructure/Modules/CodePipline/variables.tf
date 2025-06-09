@@ -32,6 +32,10 @@ variable "ProjectName_frontend" {
   type = string
   description = "name of the project"
 }
+variable "PromprojectName_frontend" {
+  type = string
+  description = "name of pipeline project"
+}
 variable "AppName_Backend" {
   type = string
   description = "name of the application"
@@ -44,7 +48,15 @@ variable "AppName_frontend" {
   type = string
   description = "name of the application"
 }
+variable "PromappName_frontend" {
+  type = string
+  description = "name of prometheus application"
+}
 variable "DeploymentGroup_frontend" {
   type = string
   description = "name of the deployment group"
+}
+variable "PromDeploymentGroup_frontend" {
+  type = string
+  description = "prometheus deployment group"
 }
