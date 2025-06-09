@@ -54,7 +54,7 @@ phases:
 
       - echo Pushing promethues image
       - docker push $PROMETHUES_REPO_URL:latest
-      - docker push $PROMETHUES_REPO_URL:$IMAGE_TAG
+
 
 
 
