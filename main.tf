@@ -193,16 +193,6 @@ module "App_load_balancer_client" {
 
 }
 
-module "prometheus_loadbalancer" {
-  source = "./Infrastructure/Modules/LoadBalancer"
-  name   = "Promethues-lb${var.environment}"
-  vpc_id = module.VPC.vpc_id
-  create_load_balancer = true
-  subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
-  sec_group = module.prometheus_security_group.security_group_id
-  target_group_arn = module.prometheus_target_group_blue.target_group_arn
-}
-
 module "prometheus_loadbalancer-b" {
   source = "./Infrastructure/Modules/LoadBalancer"
   name   = "Promethues-lb${var.environment}-b"
