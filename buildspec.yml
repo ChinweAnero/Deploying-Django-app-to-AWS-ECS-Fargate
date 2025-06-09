@@ -40,7 +40,7 @@ phases:
       - docker tag $FRONTEND_REPO_URL:$IMAGE_TAG $FRONTEND_REPO_URL:latest
 
       - echo building promethues image...
-      - docker build -t $PROMETHUES_REPO_URL:$IMAGE_TAG -f Dockerfile ./promethues-metrics/Dockerfile .
+      - docker build -t $PROMETHUES_REPO_URL:$IMAGE_TAG -f ./promethues-metrics/Dockerfile .
       - docker tag $PROMETHUES_REPO_URL:$IMAGE_TAG $PROMETHUES_REPO_URL:latest
 
 
