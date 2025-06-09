@@ -55,7 +55,7 @@ phases:
 
 
       - echo Pushing promethues image
-      - docker push $FRONTEND_REPO_URL:$IMAGE_TAG
+      - docker push $PROMETHUES_REPO_URL:$IMAGE_TAG
       - docker push $PROMETHUES_REPO_URL:latest
 
 
@@ -64,15 +64,31 @@ phases:
       - echo Updating task definition with new frontend image URI...
       - export IMAGE_URI=$FRONTEND_REPO_URL:$IMAGE_TAG
       - sed "s|<IMAGE_URI>|$IMAGE_URI|g" taskdef-template.json > taskdef.json
-
       - echo Registering task definition...
       - TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
-
       - echo Generating appspec.json from template...
       - sed "s|\[TASK_DEF_ARN\]|$TASK_DEF_ARN|g" appspec-template.json > appspec.json
+
+
+
+      - echo Updating task definition with new frontend image URI...
+      - export IMAGE_URI=$PROMETHUES_REPO_URL:$IMAGE_TAG
+      - sed "s|<IMAGE_URI>|$IMAGE_URI|g" taskdef-prometheus-template.json > prometheus-taskdef.json
+
+      - echo Registering Prometheus task definition...
+      - |
+        PROM_TASK_DEF_ARN=$(aws ecs register-task-definition \
+          --cli-input-json file://prometheus-taskdef.json \
+          --query 'taskDefinition.taskDefinitionArn' \
+          --output text)
+        echo "Prometheus Task Definition ARN: $PROM_TASK_DEF_ARN"
+      - echo Generating Prometheus appspec.json from template...
+      - sed "s|\[TASK_DEF_ARN\]|$PROM_TASK_DEF_ARN|g" prometheus-appspec-template.json > prometheus-appspec.json
 
 
 artifacts:
   files:
     - taskdef.json
     - appspec.json
+    - prometheus-taskdef.json
+    - prometheus-appspec.json

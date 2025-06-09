@@ -50,6 +50,10 @@ variable "container_name_frontend" {
   type = string
   default = "frontend-container"
 }
+variable "prometheus_container" {
+  type = string
+  default = "prometheus-container"
+}
 variable "backend_port" {
   type = number
   default = 8000
@@ -83,6 +87,11 @@ variable "folder_path_frontend" {
   type = string
   default = "App"
   description = "where application frontend files are stored"
+}
+variable "prometheus_folder_path" {
+  type = string
+  default = "promethues-metrics/prometheus.yml"
+  description = "path to prometheus.yml"
 }
 variable "trigger_name" {
   type = string
