@@ -483,7 +483,7 @@ module "codebuild_frontend" {
 module "codebuild_prometheus" {
   source = "./Infrastructure/Modules/CodeBuild"
   aws_account_id = data.aws_caller_identity.current.account_id
-  backend_lb_url = module.prometheus_loadbalancer.load_balancer_arn
+  backend_lb_url = module.prometheus_loadbalancer-b.load_balancer_dns
   build_spec = var.build_spec
   container_name = var.prometheus_container
   dynamodb_table = ""
