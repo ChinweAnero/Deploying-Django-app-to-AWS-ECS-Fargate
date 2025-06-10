@@ -144,7 +144,7 @@ module "prometheus_target_group_blue" {
   name   = "prometheus-${var.environment}-target-group-b"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
-  port = 8000
+  port = 8080
   target_type = "ip"
   protocol = "HTTP"
   healthcheck_path = "/-/healthy"
@@ -161,7 +161,7 @@ module "prometheus_target_group_green" {
   name   = "prometheus-${var.environment}-target-group-g"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
-  port = 8000
+  port = 8080
   target_type = "ip"
   protocol = "HTTP"
   healthcheck_path = "/-/healthy"
@@ -360,7 +360,7 @@ module "prometheus_ecs_service" {
   alb_arn = module.prometheus_target_group_blue.target_group_arn
   cluster_id = module.cluster_ecs.cluster_id
   container_name = "prometheus"
-  container_port = 8000
+  container_port = 8080
   desired_count = 1
   name = "promethues-ecs${var.environment}"
   security_groups = module.prometheus_security_group.security_group_id
@@ -494,7 +494,7 @@ module "codebuild_prometheus" {
   name = "codebuild-prometheus-${var.environment}"
   region_aws = var.aws_region
   repo_url = module.promethues_repo.ecr_repo_url
-  service_port = 8000
+  service_port = 8080
   service_role_arn = module.pipeline_role.role_arn
   task_definition_family = module.frontend_ecs_task_definition.taskDef_family
 }
