@@ -70,8 +70,8 @@ module "prometheus_security_group-rule" {
   source = "./Infrastructure/Modules/Security Group Rules"
   cidr_blocks = ["0.0.0.0/0"]
   protocol = "tcp"
-  from_port = 9090
-  to_port = 9090
+  from_port = 80
+  to_port = 80
   security_group_id = module.prometheus_security_group.security_group_id
   type = "ingress"
 }
@@ -315,7 +315,7 @@ module "promethues_ecs_security_group" {
   name = "promethues-ecs-security_group${var.environment}"
   vpc_id = module.VPC.vpc_id
   security_group = [module.prometheus_security_group.security_group_id]
-  ingress_port = 9090
+  ingress_port = 8000
 }
 
 #*************ecs cluster**************************************************#
@@ -360,7 +360,7 @@ module "prometheus_ecs_service" {
   alb_arn = module.prometheus_target_group_blue.target_group_arn
   cluster_id = module.cluster_ecs.cluster_id
   container_name = "prometheus"
-  container_port = 9090
+  container_port = 8000
   desired_count = 1
   name = "promethues-ecs${var.environment}"
   security_groups = module.prometheus_security_group.security_group_id
@@ -494,7 +494,7 @@ module "codebuild_prometheus" {
   name = "codebuild-prometheus-${var.environment}"
   region_aws = var.aws_region
   repo_url = module.promethues_repo.ecr_repo_url
-  service_port = 9090
+  service_port = 8000
   service_role_arn = module.pipeline_role.role_arn
   task_definition_family = module.frontend_ecs_task_definition.taskDef_family
 }
