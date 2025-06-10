@@ -8,6 +8,7 @@ resource "aws_ecs_service" "ecs_service" {
   health_check_grace_period_seconds = 10
   iam_role = ""
   depends_on = []
+  #enable_execute_command = true
 
 
   network_configuration {
