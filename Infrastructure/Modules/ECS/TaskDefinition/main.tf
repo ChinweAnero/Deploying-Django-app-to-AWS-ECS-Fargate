@@ -34,8 +34,8 @@ resource "aws_ecs_task_definition" "task_service" {
       essential = true
       portMappings = [
         {
-          containerPort = 9090
-          hostPort      = 9090
+          containerPort = 8000
+          hostPort      = 8000
           protocol      = "tcp"
         }
       ]
