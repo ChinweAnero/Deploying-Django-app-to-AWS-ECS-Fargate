@@ -10,6 +10,7 @@ resource "aws_lb" "load_B" {
   enable_http2 = true
   idle_timeout = 30
 
+
   enable_deletion_protection = false
 
   tags = {
@@ -46,6 +47,7 @@ resource "aws_lb_listener" "http" {
     ignore_changes = [default_action]
   }
 }
+
 
 resource "aws_lb_target_group" "ip_target_group" {
   count = var.create_target_group == true ? 1 : 0
