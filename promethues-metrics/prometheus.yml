@@ -6,6 +6,6 @@ scrape_configs:
   - job_name: "django_app"
     metrics_path: "/metrics"
     static_configs:
-      - targets: [ "Promethues-lbprod-b-1250666924.eu-west-2.elb.amazonaws.com:8080" ]
+      - targets: [ "Promethues-lbprod-b-619924745.eu-west-2.elb.amazonaws.com:8080" ]
 
 
