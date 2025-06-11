@@ -182,6 +182,19 @@ module "prometheus_ui_target_group" {
 
 }
 
+module "prometheus_ui_target_group_g" {
+  source = "./Infrastructure/Modules/LoadBalancer"
+  name   = "prometheus-${var.environment}-UI-g"
+  vpc_id = module.VPC.vpc_id
+  create_target_group = true
+  port = 9090
+  target_type = "ip"
+  protocol = "HTTP"
+  healthcheck_path = "/"
+  healthcheck_port = var.server_port
+
+}
+
 #****************************configuring load balancer for both client and server**************************#
 module "App_load_balancer_server" {
   source = "./Infrastructure/Modules/LoadBalancer"
@@ -537,6 +550,25 @@ module "codebuild_prometheus" {
   service_role_arn = module.pipeline_role.role_arn
   task_definition_family = module.frontend_ecs_task_definition.taskDef_family
 }
+module "codebuild_prometheusUI" {
+  source = "./Infrastructure/Modules/CodeBuild"
+  aws_account_id = data.aws_caller_identity.current.account_id
+  backend_lb_url = module.prometheusUI_loadbalancer.load_balancer_dns
+  build_spec = var.build_spec
+  container_name = var.prometheus_container
+  dynamodb_table = ""
+  ecs_role = var.iam_for_cicd["ecs"]
+  ecs_task_role = module.role_for_ecs.ecs_task_role_name
+  folder_path = var.prometheus_folder_path
+  name = "codebuild-prometheusUI-${var.environment}"
+  region_aws = var.aws_region
+  repo_url = module.promethues_repo.ecr_repo_url
+  service_port = 8080
+  service_role_arn = module.pipeline_role.role_arn
+  task_definition_family = module.frontend_ecs_task_definition.taskDef_family
+}
+
+
 ## codedeploy projects###
 module "codedeploy_backend" {
   source = "./Infrastructure/Modules/CodeDeploy"
@@ -575,6 +607,22 @@ module "prometheus_codedeploy" {
   trigger_name       = var.trigger_name
 }
 
+module "prometheusUI_codedeploy" {
+  source = "./Infrastructure/Modules/CodeDeploy"
+  aws_lb_listener    = module.prometheusUI_loadbalancer.listener_arn
+  blue_target_group  = module.prometheus_ui_target_group.target_group_name
+  cluster_name       = module.cluster_ecs.name_of_cluster
+  green_target_group = module.prometheus_ui_target_group_g.target_group_name
+  name               = "promUI-codedeploy-${var.environment}"
+  service_name       = module.prometheus_UI-ecs_service.ecs_name
+  service_role_arn   = module.codedeploy_iam_role.codedeploy_arn
+  sns_topic_arn      = module.sns_topic.sns_arn
+  trigger_name       = var.trigger_name
+}
+
+
+
+
 #**************sns topic**********************#
 module "sns_topic" {
   source = "./Infrastructure/Modules/SNS"
@@ -612,6 +660,9 @@ module "codepipeline" {
   PromprojectName = module.codebuild_prometheus.project_id
   PromappName = module.prometheus_codedeploy.app_name
   PromDeploymentGroup = module.prometheus_codedeploy.deployment_group_name
+  PromUIDeploymentGroup = module.prometheusUI_codedeploy.deployment_group_name
+  PromUIappName = module.prometheusUI_codedeploy.app_name
+  PromuiprojectName = module.codebuild_prometheusUI.project_id
 }
 # import {
 #   id = ""
