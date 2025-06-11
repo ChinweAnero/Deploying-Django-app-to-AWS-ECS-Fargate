@@ -482,8 +482,8 @@ module "policy_for_pipeline_role" {
   attach_with_role = module.pipeline_role.ecs_name_
   create_ecs_policy = true
   ecr_repo = [module.backend_ecr.ecr_repo_arn, module.frontend_ecr.ecr_repo_arn,   module.promethues_repo.ecr_repo_arn]
-  codebuild_projects = [module.codebuild_backend.project_arn, module.codebuild_frontend.project_arn, module.codebuild_prometheus.project_arn]
-  code_deploy_projects = [module.codedeploy_backend.application_arn, module.codedeploy_backend.deployment_group_arn, module.codedeploy_frontend.application_arn, module.codedeploy_frontend.deployment_group_arn, module.prometheus_codedeploy.deployment_group_arn]
+  codebuild_projects = [module.codebuild_backend.project_arn, module.codebuild_frontend.project_arn, module.codebuild_prometheus.project_arn, module.codebuild_prometheusUI.project_arn]
+  code_deploy_projects = [module.codedeploy_backend.application_arn, module.codedeploy_backend.deployment_group_arn, module.codedeploy_frontend.application_arn, module.codedeploy_frontend.deployment_group_arn, module.prometheus_codedeploy.deployment_group_arn, module.prometheusUI_codedeploy.deployment_group_arn]
   codedeploy_role_name = ""
   ecs_task_role_name = ""
   pipeline_role_name = ""
