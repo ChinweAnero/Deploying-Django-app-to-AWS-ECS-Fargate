@@ -660,7 +660,7 @@ module "codepipeline" {
   PromprojectName = module.codebuild_prometheus.project_id
   PromappName = module.prometheus_codedeploy.app_name
   PromDeploymentGroup = module.prometheus_codedeploy.deployment_group_name
-  PromUIDeploymentGroup = module.prometheus_codedeploy.deployment_group_name
+  PromUIDeploymentGroup = module.prometheusUI_codedeploy.deployment_group_name
   PromUIappName = module.prometheus_codedeploy.app_name
   PromuiprojectName = module.codebuild_prometheusUI.project_id
 }
