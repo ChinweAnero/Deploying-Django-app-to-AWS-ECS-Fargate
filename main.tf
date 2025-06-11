@@ -161,7 +161,7 @@ module "prometheus_target_group_green" {
   name   = "prometheus-${var.environment}-target-group-g"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
-  port = 9090
+  port = 8000
   target_type = "ip"
   protocol = "HTTP"
   healthcheck_path = "/-/healthy"
