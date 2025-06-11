@@ -169,6 +169,19 @@ module "prometheus_target_group_green" {
 
 }
 
+module "prometheus_ui_target_group" {
+  source = "./Infrastructure/Modules/LoadBalancer"
+  name   = "prometheus-${var.environment}-UI"
+  vpc_id = module.VPC.vpc_id
+  create_target_group = true
+  port = 9090
+  target_type = "ip"
+  protocol = "HTTP"
+  healthcheck_path = "/"
+  healthcheck_port = var.server_port
+
+}
+
 #****************************configuring load balancer for both client and server**************************#
 module "App_load_balancer_server" {
   source = "./Infrastructure/Modules/LoadBalancer"
@@ -203,6 +216,17 @@ module "prometheus_loadbalancer-b" {
   target_group_arn = module.prometheus_target_group_blue.target_group_arn
 
 }
+module "prometheusUI_loadbalancer" {
+  source = "./Infrastructure/Modules/LoadBalancer"
+  name   = "Promethues-UI-lb${var.environment}"
+  vpc_id = module.VPC.vpc_id
+  create_load_balancer = true
+  subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
+  sec_group = module.prometheus_security_group.security_group_id
+  target_group_arn = module.prometheus_ui_target_group.target_group_arn
+
+}
+
 
 #****************creating the s3 bucket**********************************#
 module "s3" {
@@ -367,6 +391,21 @@ module "prometheus_ecs_service" {
   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
   taskdef = module.frontend_ecs_task_definition.taskDef_arn
   depends_on = [module.prometheus_loadbalancer-b.load_balancer_arn]
+
+}
+
+module "prometheus_UI-ecs_service" {
+  source = "./Infrastructure/Modules/ECS/Service"
+  alb_arn = module.prometheus_ui_target_group.target_group_arn
+  cluster_id = module.cluster_ecs.cluster_id
+  container_name = "prometheus"
+  container_port = 8080
+  desired_count = 1
+  name = "promethues-UI-ecs${var.environment}"
+  security_groups = module.prometheus_security_group.security_group_id
+  subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
+  taskdef = module.frontend_ecs_task_definition.taskDef_arn
+  depends_on = [module.prometheusUI_loadbalancer.load_balancer_arn]
 
 }
 
@@ -603,4 +642,16 @@ module "prometheus_listener_rule" {
   listener_arn = module.prometheus_port_listener.prometheus_listener_arn
   prometheus-target-group-arn = module.prometheus_target_group_blue.target_group_arn
 
+}
+
+###########exposing prometheus ui on port 9090#############
+module "prometheuis_ui_listener" {
+  source = "./Infrastructure/Modules/PrometheusUI Listener"
+  prometheus-loadbalancer = module.prometheusUI_loadbalancer.load_balancer_arn
+  prometheus-target-group-arn = module.prometheus_ui_target_group.target_group_arn
+}
+module "prometheus_ui_listener_rule" {
+  source = "./Infrastructure/Modules/PrometheusUI Loadbalancer"
+  listener_arn = module.prometheuis_ui_listener.prometheus_listener_arn
+  prometheus-target-group-arn = module.prometheus_ui_target_group.target_group_arn
 }
