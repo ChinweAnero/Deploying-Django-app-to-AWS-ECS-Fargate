@@ -14,8 +14,8 @@ resource "aws_ecs_task_definition" "Prom_task_service" {
       essential = true
       portMappings = [
         {
-          containerPort = var.containerPort
-          hostPort      = var.hostPort
+          containerPort = 8080
+          hostPort      = 8080
           protocol      = "tcp"
         }
       ]
