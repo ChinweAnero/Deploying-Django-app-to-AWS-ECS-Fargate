@@ -349,6 +349,23 @@ module "frontend_ecs_task_definition" {
   clusterName  = module.cluster_ecs.name_of_cluster
 
 }
+module "prometheusUI_TASK_definition" {
+  source = "./Infrastructure/Modules/ECS/TaskDefinition"
+  containerPort = 9090
+  image = "python:3.12-slim"
+  cpu = 256
+  execution_role_arn = module.role_for_ecs.role_arn
+  family = "ECS-FAMILY"
+  hostPort = 9090
+  memory = "512"
+  name = "frontend-taskdef-${var.environment}"
+  name_of_container = "prometheusUI"
+  region = var.aws_region
+  task_role_arn = module.role_for_ecs.ecs_task_role_arn
+
+  clusterName  = module.cluster_ecs.name_of_cluster
+
+}
 
 #*******************security group for ecs tasks*****************************#
 module "backend_ecs_security_group" {
@@ -443,7 +460,7 @@ module "prometheus_UI-ecs_service" {
   name = "promethues-UI-ecs${var.environment}"
   security_groups = module.prometheusUI_security_group.security_group_id
   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
-  taskdef = module.frontend_ecs_task_definition.taskDef_arn
+  taskdef = module.prometheusUI_TASK_definition.taskDef_arn
   depends_on = [module.prometheusUI_loadbalancer.load_balancer_arn]
 
 }
@@ -591,7 +608,7 @@ module "codebuild_prometheusUI" {
   repo_url = module.promethues_repo.ecr_repo_url
   service_port = 8080
   service_role_arn = module.pipeline_role.role_arn
-  task_definition_family = module.frontend_ecs_task_definition.taskDef_family
+  task_definition_family = module.prometheusUI_TASK_definition.taskDef_family
 }
 
 
