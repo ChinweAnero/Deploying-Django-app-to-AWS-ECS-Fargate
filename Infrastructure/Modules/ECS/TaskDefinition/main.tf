@@ -26,55 +26,6 @@ resource "aws_ecs_task_definition" "task_service" {
           awslogs-stream-prefix = "ecs"
         }
       }
-    },
-    
-    {
-      name      = "prometheus"
-      image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"
-      essential = true
-      portMappings = [
-        {
-          containerPort = 8080
-          hostPort      = 8080
-          protocol      = "tcp"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = "/ecs/prometheus"
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "prometheus"
-        }
-      }
-      authorization_config = {
-           credentials_parameter = "arn:aws:secretsmanager:eu-west-2:707798379596:secret:dockerhub-credentials-nOk8mq"
-
-        }
-    },
-    {
-      name      = "prometheusUI"
-      image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"
-      essential = true
-      portMappings = [
-        {
-          containerPort = 9090
-          hostPort      = 9090
-          protocol      = "tcp"
-        }
-      ]
-      # logConfiguration = {
-      #   logDriver = "awslogs"
-      #   options = {
-      #     awslogs-group         = "/ecs/prometheus"
-      #     awslogs-region        = var.region
-      #     awslogs-stream-prefix = "prometheus"
-      #   }
-      # }
-      authorization_config = {
-           credentials_parameter = "arn:aws:secretsmanager:eu-west-2:707798379596:secret:dockerhub-credentials-nOk8mq"
-
-        }
     }
   ])
 
