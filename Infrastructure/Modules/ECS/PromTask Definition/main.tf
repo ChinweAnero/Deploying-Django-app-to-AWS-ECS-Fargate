@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "Prom_task_service" {
 
   container_definitions = jsonencode([
     {
-      name      = var.name_of_container
+      name      = "prometheus"
       image     = "707798379596.dkr.ecr.eu-west-2.amazonaws.com/prometheus-monitoring:latest"
       essential = true
       portMappings = [
