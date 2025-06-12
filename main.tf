@@ -441,7 +441,7 @@ module "prometheus_UI-ecs_service" {
   container_port = 8080
   desired_count = 1
   name = "promethues-UI-ecs${var.environment}"
-  security_groups = module.prometheus_security_group.security_group_id
+  security_groups = module.prometheusUI_security_group.security_group_id
   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
   taskdef = module.frontend_ecs_task_definition.taskDef_arn
   depends_on = [module.prometheusUI_loadbalancer.load_balancer_arn]
