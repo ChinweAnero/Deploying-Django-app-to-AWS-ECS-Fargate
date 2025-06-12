@@ -350,7 +350,7 @@ module "frontend_ecs_task_definition" {
 
 }
 module "prometheusUI_TASK_definition" {
-  source = "./Infrastructure/Modules/ECS/TaskDefinition"
+  source = "./Infrastructure/Modules/ECS/PromTask Definition"
   containerPort = var.prometheus_container_port
   image = "python:3.12-slim"
   cpu = 256
