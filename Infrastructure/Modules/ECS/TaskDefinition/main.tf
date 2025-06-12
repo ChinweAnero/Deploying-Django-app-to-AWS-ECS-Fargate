@@ -63,14 +63,14 @@ resource "aws_ecs_task_definition" "task_service" {
           protocol      = "tcp"
         }
       ]
-      # logConfiguration = {
-      #   logDriver = "awslogs"
-      #   options = {
-      #     awslogs-group         = "/ecs/prometheus"
-      #     awslogs-region        = var.region
-      #     awslogs-stream-prefix = "prometheus"
-      #   }
-      # }
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/prometheusui"
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "prometheus"
+        }
+      }
       authorization_config = {
            credentials_parameter = "arn:aws:secretsmanager:eu-west-2:707798379596:secret:dockerhub-credentials-nOk8mq"
 

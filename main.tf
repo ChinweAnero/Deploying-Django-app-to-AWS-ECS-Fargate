@@ -359,7 +359,7 @@ module "prometheusUI_TASK_definition" {
   hostPort = 9090
   memory = "512"
   name = "frontend-taskdef-${var.environment}"
-  name_of_container = "prometheusUI"
+  name_of_container = var.prometheus_container
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
 
