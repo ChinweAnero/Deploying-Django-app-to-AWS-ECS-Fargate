@@ -120,3 +120,7 @@ variable "prometheusUI_hostport" {
   type = number
   default = 9090
 }
+variable "prometheus_container_port" {
+  type = number
+  default = 9090
+}
