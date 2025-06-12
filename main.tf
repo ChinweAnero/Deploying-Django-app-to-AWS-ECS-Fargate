@@ -76,6 +76,25 @@ module "prometheus_security_group-rule" {
   type = "ingress"
 }
 
+module "prometheusUI_security_group" {
+  source = "./Infrastructure/Modules/Security_Group"
+  vpc_id = module.VPC.vpc_id
+  ingress_cidr_block = ["0.0.0.0/0"]
+  ingress_port = 9090
+  name = "promethuesui-sec_group${var.environment}"
+}
+module "prometheusUI_security_group-rule" {
+  source = "./Infrastructure/Modules/Security Group Rules"
+  cidr_blocks = ["0.0.0.0/0"]
+  protocol = "tcp"
+  from_port = 80
+  to_port = 80
+  security_group_id = module.prometheusUI_security_group.security_group_id
+  type = "ingress"
+}
+
+
+
 module "alb_backend_Security_group" {
   source = "./Infrastructure/Modules/Security_Group"
   vpc_id         = module.VPC.vpc_id
@@ -353,6 +372,13 @@ module "promethues_ecs_security_group" {
   vpc_id = module.VPC.vpc_id
   security_group = [module.prometheus_security_group.security_group_id]
   ingress_port = 8000
+}
+
+module "prometheusUI_ecs_security_group" {
+  source = "./Infrastructure/Modules/Security_Group"
+  vpc_id = module.VPC.vpc_id
+  security_group = [module.prometheusUI_security_group.security_group_id]
+  ingress_port = 9090
 }
 
 #*************ecs cluster**************************************************#
