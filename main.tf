@@ -351,12 +351,12 @@ module "frontend_ecs_task_definition" {
 }
 module "prometheusUI_TASK_definition" {
   source = "./Infrastructure/Modules/ECS/PromTask Definition"
-  containerPort = var.prometheus_container_port
+  containerPort = 9090
   image = "python:3.12-slim"
   cpu = 256
   execution_role_arn = module.role_for_ecs.role_arn
   family = "ECS-FAMILY"
-  hostPort = var.prometheusUI_hostport
+  hostPort = 9090
   memory = "512"
   name = "frontend-taskdef-${var.environment}"
   name_of_container = var.prometheus_container
