@@ -356,7 +356,7 @@ module "prometheusUI_TASK_definition" {
   cpu = 256
   execution_role_arn = module.role_for_ecs.role_arn
   family = "ECS-FAMILY"
-  hostPort = 9090
+  hostPort = var.prometheusUI_hostport
   memory = "512"
   name = "frontend-taskdef-${var.environment}"
   name_of_container = var.prometheus_container

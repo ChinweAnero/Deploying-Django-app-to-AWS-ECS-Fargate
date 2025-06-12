@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "task_service" {
       portMappings = [
         {
           containerPort = 9090
-          hostPort      = 9090
+          hostPort      = var.hostPort
           protocol      = "tcp"
         }
       ]
@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "task_service" {
 
 }
 
-resource "aws_cloudwatch_log_group" "log_group_taskDef" {
-  name              = "task-definition-${var.name}"
-  retention_in_days = 30
-}
+# resource "aws_cloudwatch_log_group" "log_group_taskDef" {
+#   name              = "task-definition-${var.name}"
+#   retention_in_days = 30
+# }

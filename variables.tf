@@ -116,4 +116,7 @@ variable "codestar_github_name" {
   description = "name of the codestar resource"
   default = "connect_github"
 }
-
+variable "prometheusUI_hostport" {
+  type = number
+  default = 9090
+}
