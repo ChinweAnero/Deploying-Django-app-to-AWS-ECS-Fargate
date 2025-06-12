@@ -163,7 +163,7 @@ module "prometheus_target_group_blue" {
   name   = "prometheus-${var.environment}-target-group-b"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
-  port = 8080
+  port = 9090
   target_type = "ip"
   protocol = "HTTP"
   healthcheck_path = "/-/healthy"
@@ -180,7 +180,7 @@ module "prometheus_target_group_green" {
   name   = "prometheus-${var.environment}-target-group-g"
   vpc_id = module.VPC.vpc_id
   create_target_group = true
-  port = 8080
+  port = 9090
   target_type = "ip"
   protocol = "HTTP"
   healthcheck_path = "/-/healthy"
@@ -196,7 +196,7 @@ module "prometheus_ui_target_group" {
   port = 9090
   target_type = "ip"
   protocol = "HTTP"
-  healthcheck_path = "/"
+  healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
 
 }
@@ -209,7 +209,7 @@ module "prometheus_ui_target_group_g" {
   port = 9090
   target_type = "ip"
   protocol = "HTTP"
-  healthcheck_path = "/"
+  healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
 
 }
@@ -358,8 +358,7 @@ module "prometheusUI_TASK_definition" {
   family = "ECS-FAMILY"
   hostPort = 9090
   memory = "512"
-  name = "frontend-taskdef-${var.environment}"
-  name_of_container = var.prometheus_container
+  name = "prom-taskdef-${var.environment}"
   region = var.aws_region
   task_role_arn = module.role_for_ecs.ecs_task_role_arn
 

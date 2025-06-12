@@ -30,11 +30,7 @@ variable "image" {
   type = string
   description = "docker image to use"
 }
-variable "name_of_container" {
-  type = string
-  description = "container name to use"
 
-}
 variable "containerPort" {
   type = number
   description = "container port"
