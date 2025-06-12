@@ -254,7 +254,7 @@ module "prometheusUI_loadbalancer" {
   vpc_id = module.VPC.vpc_id
   create_load_balancer = true
   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
-  sec_group = module.prometheus_security_group.security_group_id
+  sec_group = module.prometheusUI_security_group.security_group_id
   target_group_arn = module.prometheus_ui_target_group.target_group_arn
 
 }
