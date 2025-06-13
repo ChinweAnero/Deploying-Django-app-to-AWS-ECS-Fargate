@@ -645,7 +645,8 @@ module "codedeploy_frontend" {
 }
 module "prometheus_codedeploy" {
   source = "./Infrastructure/Modules/CodeDeploy"
-  aws_lb_listener    = module.prometheus_loadbalancer-b.listener_arn
+  aws_lb_listener    = module.prometheus_port_listener.prometheus_listener_arn
+  #module.prometheus_loadbalancer-b.listener_arn
   blue_target_group  = module.prometheus_target_group_blue.target_group_name
   cluster_name       = module.cluster_ecs.name_of_cluster
   green_target_group = module.prometheus_target_group_green.target_group_name
