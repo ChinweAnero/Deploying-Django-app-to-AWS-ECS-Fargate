@@ -62,7 +62,7 @@ module "prometheus_security_group" {
   source = "./Infrastructure/Modules/Security_Group"
   vpc_id = module.VPC.vpc_id
   ingress_cidr_block = ["0.0.0.0/0"]
-  ingress_port = 8000
+  ingress_port = 9090
   name = "promethues-sec_group${var.environment}"
 
 }
@@ -387,7 +387,7 @@ module "promethues_ecs_security_group" {
   name = "promethues-ecs-security_group${var.environment}"
   vpc_id = module.VPC.vpc_id
   security_group = [module.prometheus_security_group.security_group_id]
-  ingress_port = 8000
+  ingress_port = 9090
 }
 
 module "prometheusUI_ecs_security_group" {
