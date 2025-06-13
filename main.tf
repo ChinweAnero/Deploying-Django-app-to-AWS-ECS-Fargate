@@ -176,10 +176,6 @@ module "prometheus_target_group_blue" {
 
 }
 
-# import {
-#    to = module.prometheus_target_group_green.aws_lb_target_group.ip_target_group[0]
-#    id = module.prometheus_target_group_green.aws_lb_target_group.arn
-#  }
 module "prometheus_target_group_green" {
   source = "./Infrastructure/Modules/LoadBalancer"
   name   = "prometheus-${var.environment}-target-group-g"
@@ -425,7 +421,7 @@ module "backend_ecs_service" {
   subnets = [module.VPC.private_subnet_backend_[0], module.VPC.private_subnet_backend_[1]]
   taskdef         = module.backend_ecs_task_definition.taskDef_arn
   depends_on = [module.App_load_balancer_server]
-  alb_arn = module.server_target_group_blue.target_group_arn
+  primary_target_group_arn = module.server_target_group_blue.target_group_arn
 
 }
 module "frontend_ecs_service" {
@@ -440,13 +436,14 @@ module "frontend_ecs_service" {
   taskdef         = module.frontend_ecs_task_definition.taskDef_arn
   depends_on = [module.App_load_balancer_client]
 
-  alb_arn         = module.target_group_client_blue.target_group_arn
+  primary_target_group_arn = module.target_group_client_blue.target_group_arn
+
 
 }
 
 module "prometheus_ecs_service" {
   source = "./Infrastructure/Modules/ECS/Service"
-  alb_arn = module.prometheus_target_group_blue.target_group_arn
+  primary_target_group_arn = module.prometheus_target_group_blue.target_group_arn
   cluster_id = module.cluster_ecs.cluster_id
   container_name = "prometheus"
   container_port = 9090

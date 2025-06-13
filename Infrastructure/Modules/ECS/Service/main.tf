@@ -16,14 +16,14 @@ resource "aws_ecs_service" "ecs_service" {
     security_groups = [var.security_groups]
   }
 
-  load_balancer {
-   target_group_arn = var.alb_arn
-    container_name   = var.container_name
-    container_port   = var.container_port
-  }
+  # load_balancer {
+  #  target_group_arn = var.alb_arn
+  #   container_name   = var.container_name
+  #   container_port   = var.container_port
+  # }
 
   load_balancer {
-    target_group_arn = var.alb_arn
+    target_group_arn = var.primary_target_group_arn
     container_name   = var.container_name
     container_port   = var.container_port
   }
