@@ -439,12 +439,12 @@ module "prometheus_ecs_service" {
   alb_arn = module.prometheus_target_group_blue.target_group_arn
   cluster_id = module.cluster_ecs.cluster_id
   container_name = "prometheus"
-  container_port = 8080
+  container_port = 9090
   desired_count = 1
   name = "promethues-ecs${var.environment}"
   security_groups = module.prometheus_security_group.security_group_id
   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
-  taskdef = module.frontend_ecs_task_definition.taskDef_arn
+  taskdef = module.prometheusUI_TASK_definition.taskDef_arn
   depends_on = [module.prometheus_loadbalancer-b.load_balancer_arn]
 
 }
@@ -454,7 +454,7 @@ module "prometheus_UI-ecs_service" {
   alb_arn = module.prometheus_ui_target_group.target_group_arn
   cluster_id = module.cluster_ecs.cluster_id
   container_name = "prometheus"
-  container_port = 8080
+  container_port = 9090
   desired_count = 1
   name = "promethues-UI-ecs${var.environment}"
   security_groups = module.prometheusUI_security_group.security_group_id
