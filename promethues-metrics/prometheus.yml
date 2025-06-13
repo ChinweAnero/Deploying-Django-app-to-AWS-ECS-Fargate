@@ -4,8 +4,8 @@ global:
 
 scrape_configs:
   - job_name: "django_app"
-    #metrics_path: "/metrics"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: [ "Promethues-lbprod-b-532603139.eu-west-2.elb.amazonaws.com:9090" ]
+      - targets: [ "" ]
 
 
