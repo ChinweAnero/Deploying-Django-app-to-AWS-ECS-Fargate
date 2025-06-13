@@ -73,3 +73,6 @@ variable "create_target_group" {
 #   default = ""
 #   description = "the arn for the target group"
 # }
+variable "listener_arn" {
+  type = string
+}
