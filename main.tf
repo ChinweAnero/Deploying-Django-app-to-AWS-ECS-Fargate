@@ -745,6 +745,7 @@ module "prometheuis_ui_listener" {
 }
 module "prometheus_ui_listener_rule" {
   source = "./Infrastructure/Modules/PrometheusUI Loadbalancer"
-  listener_arn = module.prometheuis_ui_listener.prometheus_listener_arn
+  #listener_arn = module.prometheuis_ui_listener.prometheus_listener_arn
   prometheus-target-group-arn = module.prometheus_ui_target_group.target_group_arn
+  listener_arn = module.App_load_balancer_client.listener_arn
 }
