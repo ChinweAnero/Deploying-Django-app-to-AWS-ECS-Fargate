@@ -6,7 +6,7 @@ variable "cluster_id" {
   type = string
   description = "id of the cluster"
 }
-variable "alb_arn" {
+variable "primary_target_group_arn" {
   type = string
   description = "the load balancer arn"
 }
