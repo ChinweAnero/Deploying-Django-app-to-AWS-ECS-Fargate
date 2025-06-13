@@ -49,6 +49,7 @@ resource "aws_lb_listener" "http" {
 }
 
 
+
 resource "aws_lb_target_group" "ip_target_group" {
   count = var.create_target_group == true ? 1 : 0
   name        = var.name
