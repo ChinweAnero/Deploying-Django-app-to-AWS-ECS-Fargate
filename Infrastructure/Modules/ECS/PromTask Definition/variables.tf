@@ -45,3 +45,7 @@ variable "clusterName" {
   type = string
 }
 
+# variable "prometheus_container" {
+#   type = string
+# }
+
