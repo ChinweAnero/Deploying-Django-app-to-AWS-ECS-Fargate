@@ -1,7 +1,7 @@
 resource "aws_lb_listener" "prometheusUI-listener" {
   #count = 1
   load_balancer_arn = var.prometheus-loadbalancer
-  port              = "80"
+  port              = "8000"
   protocol          = "HTTP"
 
   default_action {
