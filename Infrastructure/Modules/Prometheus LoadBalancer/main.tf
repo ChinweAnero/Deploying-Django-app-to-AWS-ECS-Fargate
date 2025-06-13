@@ -10,7 +10,7 @@ resource "aws_lb_listener_rule" "expose-prometheus" {
 
   condition {
     path_pattern {
-      values = ["/metrics/*"]
+      values = ["/*"]
     }
   }
 }
