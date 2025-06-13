@@ -60,12 +60,12 @@ variable "PromDeploymentGroup" {
   type = string
   description = "prometheus deployment group"
 }
-variable "PromuiprojectName" {
-  type = string
-}
-variable "PromUIappName" {
-  type = string
-}
-variable "PromUIDeploymentGroup" {
-  type = string
-}
+# variable "PromuiprojectName" {
+#   type = string
+# }
+# variable "PromUIappName" {
+#   type = string
+# }
+# variable "PromUIDeploymentGroup" {
+#   type = string
+# }
