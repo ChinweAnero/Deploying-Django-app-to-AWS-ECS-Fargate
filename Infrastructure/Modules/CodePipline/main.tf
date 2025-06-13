@@ -73,19 +73,19 @@ resource "aws_codepipeline" "codepipeline" {
         ProjectName = var.PromprojectName
       }
     }
-    action {
-      name     = "Build_prometheus_UI"
-      category = "Build"
-      owner    = "AWS"
-      provider = "CodeBuild"
-      input_artifacts = ["SourceOutput"]
-      output_artifacts = ["BuildArtifact_prometheus_UI"]
-      version  = "1"
-
-      configuration = {
-        ProjectName = var.PromuiprojectName
-      }
-    }
+    # action {
+    #   name     = "Build_prometheus_UI"
+    #   category = "Build"
+    #   owner    = "AWS"
+    #   provider = "CodeBuild"
+    #   input_artifacts = ["SourceOutput"]
+    #   output_artifacts = ["BuildArtifact_prometheus_UI"]
+    #   version  = "1"
+    #
+    #   configuration = {
+    #     ProjectName = var.PromuiprojectName
+    #   }
+    # }
   }
 
   stage {
@@ -144,23 +144,23 @@ resource "aws_codepipeline" "codepipeline" {
         TaskDefinitionTemplateArtifact = "BuildArtifact_prometheus"
       }
     }
-    action {
-      name            = "Deploy_prometheus_UI"
-      category        = "Deploy"
-      owner           = "AWS"
-      provider        = "CodeDeployToECS"
-      input_artifacts = ["BuildArtifact_prometheus_UI"]
-      version         = "1"
-
-      configuration = {
-        TaskDefinitionTemplatePath     = "prometheus-taskdef.json"
-        AppSpecTemplateArtifact        = "BuildArtifact_prometheus_UI"
-        AppSpecTemplatePath            = "prometheus-appspec.json"
-        ApplicationName              = var.PromUIappName
-        DeploymentGroupName            = var.PromUIDeploymentGroup
-        TaskDefinitionTemplateArtifact = "BuildArtifact_prometheus_UI"
-      }
-    }
+    # action {
+    #   name            = "Deploy_prometheus_UI"
+    #   category        = "Deploy"
+    #   owner           = "AWS"
+    #   provider        = "CodeDeployToECS"
+    #   input_artifacts = ["BuildArtifact_prometheus_UI"]
+    #   version         = "1"
+    #
+    #   configuration = {
+    #     TaskDefinitionTemplatePath     = "prometheus-taskdef.json"
+    #     AppSpecTemplateArtifact        = "BuildArtifact_prometheus_UI"
+    #     AppSpecTemplatePath            = "prometheus-appspec.json"
+    #     ApplicationName              = var.PromUIappName
+    #     DeploymentGroupName            = var.PromUIDeploymentGroup
+    #     TaskDefinitionTemplateArtifact = "BuildArtifact_prometheus_UI"
+    #   }
+    # }
   }
 }
 

@@ -1,14 +1,14 @@
-resource "aws_lb_listener" "prometheusUI-listener" {
-  #count = 1
-  load_balancer_arn = var.prometheus-loadbalancer
-  port              = "8000"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = var.prometheus-target-group-arn
-  }
-  lifecycle {
-    ignore_changes = [default_action]
-  }
-}
+# resource "aws_lb_listener" "prometheusUI-listener" {
+#   #count = 1
+#   load_balancer_arn = var.prometheus-loadbalancer
+#   port              = "80"
+#   protocol          = "HTTP"
+#
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = var.prometheus-target-group-arn
+#   }
+#   lifecycle {
+#     ignore_changes = [default_action]
+#   }
+# }
