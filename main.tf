@@ -76,22 +76,22 @@ module "prometheus_security_group-rule" {
   type = "ingress"
 }
 
-module "prometheusUI_security_group" {
-  source = "./Infrastructure/Modules/Security_Group"
-  vpc_id = module.VPC.vpc_id
-  ingress_cidr_block = ["0.0.0.0/0"]
-  ingress_port = 9090
-  name = "promethuesui-sec_group${var.environment}"
-}
-module "prometheusUI_security_group-rule" {
-  source = "./Infrastructure/Modules/Security Group Rules"
-  cidr_blocks = ["0.0.0.0/0"]
-  protocol = "tcp"
-  from_port = 80
-  to_port = 80
-  security_group_id = module.prometheusUI_security_group.security_group_id
-  type = "ingress"
-}
+# module "prometheusUI_security_group" {
+#   source = "./Infrastructure/Modules/Security_Group"
+#   vpc_id = module.VPC.vpc_id
+#   ingress_cidr_block = ["0.0.0.0/0"]
+#   ingress_port = 9090
+#   name = "promethuesui-sec_group${var.environment}"
+# }
+# module "prometheusUI_security_group-rule" {
+#   source = "./Infrastructure/Modules/Security Group Rules"
+#   cidr_blocks = ["0.0.0.0/0"]
+#   protocol = "tcp"
+#   from_port = 80
+#   to_port = 80
+#   security_group_id = module.prometheusUI_security_group.security_group_id
+#   type = "ingress"
+# }
 
 
 
@@ -194,33 +194,33 @@ module "prometheus_target_group_green" {
 
 }
 
-module "prometheus_ui_target_group" {
-  source = "./Infrastructure/Modules/LoadBalancer"
-  name   = "prometheus-${var.environment}-UI"
-  vpc_id = module.VPC.vpc_id
-  create_target_group = true
-  port = 9090
-  target_type = "ip"
-  protocol = "HTTP"
-  healthcheck_path = "/-/healthy"
-  healthcheck_port = var.server_port
+# module "prometheus_ui_target_group" {
+#   source = "./Infrastructure/Modules/LoadBalancer"
+#   name   = "prometheus-${var.environment}-UI"
+#   vpc_id = module.VPC.vpc_id
+#   create_target_group = true
+#   port = 9090
+#   target_type = "ip"
+#   protocol = "HTTP"
+#   healthcheck_path = "/-/healthy"
+#   healthcheck_port = var.server_port
+#
+#
+# }
 
-
-}
-
-module "prometheus_ui_target_group_g" {
-  source = "./Infrastructure/Modules/LoadBalancer"
-  name   = "prometheus-${var.environment}-UI-g"
-  vpc_id = module.VPC.vpc_id
-  create_target_group = true
-  port = 9090
-  target_type = "ip"
-  protocol = "HTTP"
-  healthcheck_path = "/-/healthy"
-  healthcheck_port = var.server_port
-
-
-}
+# module "prometheus_ui_target_group_g" {
+#   source = "./Infrastructure/Modules/LoadBalancer"
+#   name   = "prometheus-${var.environment}-UI-g"
+#   vpc_id = module.VPC.vpc_id
+#   create_target_group = true
+#   port = 9090
+#   target_type = "ip"
+#   protocol = "HTTP"
+#   healthcheck_path = "/-/healthy"
+#   healthcheck_port = var.server_port
+#
+#
+# }
 
 #****************************configuring load balancer for both client and server**************************#
 module "App_load_balancer_server" {
@@ -257,17 +257,17 @@ module "prometheus_loadbalancer-b" {
   target_group_arn = module.prometheus_target_group_blue.target_group_arn
 
 }
-module "prometheusUI_loadbalancer" {
-  source = "./Infrastructure/Modules/LoadBalancer"
-  name   = "Promethues-UI-lb${var.environment}"
-  vpc_id = module.VPC.vpc_id
-  create_load_balancer = true
-  subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
-  sec_group = module.prometheusUI_security_group.security_group_id
-  target_group_arn = module.prometheus_ui_target_group.target_group_arn
-
-
-}
+# module "prometheusUI_loadbalancer" {
+#   source = "./Infrastructure/Modules/LoadBalancer"
+#   name   = "Promethues-UI-lb${var.environment}"
+#   vpc_id = module.VPC.vpc_id
+#   create_load_balancer = true
+#   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
+#   sec_group = module.prometheusUI_security_group.security_group_id
+#   target_group_arn = module.prometheus_ui_target_group.target_group_arn
+#
+#
+# }
 
 
 #****************creating the s3 bucket**********************************#
@@ -400,12 +400,12 @@ module "promethues_ecs_security_group" {
   ingress_port = 9090
 }
 
-module "prometheusUI_ecs_security_group" {
-  source = "./Infrastructure/Modules/Security_Group"
-  vpc_id = module.VPC.vpc_id
-  security_group = [module.prometheusUI_security_group.security_group_id]
-  ingress_port = 9090
-}
+# module "prometheusUI_ecs_security_group" {
+#   source = "./Infrastructure/Modules/Security_Group"
+#   vpc_id = module.VPC.vpc_id
+#   security_group = [module.prometheusUI_security_group.security_group_id]
+#   ingress_port = 9090
+# }
 
 #*************ecs cluster**************************************************#
 module "cluster_ecs" {
@@ -459,20 +459,20 @@ module "prometheus_ecs_service" {
 
 }
 
-module "prometheus_UI-ecs_service" {
-  source = "./Infrastructure/Modules/ECS/Service"
-  alb_arn = module.prometheus_ui_target_group.target_group_arn
-  cluster_id = module.cluster_ecs.cluster_id
-  container_name = "prometheus"
-  container_port = 9090
-  desired_count = 1
-  name = "promethues-UI-ecs${var.environment}"
-  security_groups = module.prometheusUI_security_group.security_group_id
-  subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
-  taskdef = module.prometheusUI_TASK_definition.taskDef_arn
-  depends_on = [module.prometheusUI_loadbalancer.load_balancer_arn]
-
-}
+# module "prometheus_UI-ecs_service" {
+#   source = "./Infrastructure/Modules/ECS/Service"
+#   alb_arn = module.prometheus_ui_target_group.target_group_arn
+#   cluster_id = module.cluster_ecs.cluster_id
+#   container_name = "prometheus"
+#   container_port = 9090
+#   desired_count = 1
+#   name = "promethues-UI-ecs${var.environment}"
+#   security_groups = module.prometheusUI_security_group.security_group_id
+#   subnets = [module.VPC.private_subnet_frontend_[0], module.VPC.private_subnet_frontend_[1]]
+#   taskdef = module.prometheusUI_TASK_definition.taskDef_arn
+#   depends_on = [module.prometheusUI_loadbalancer.load_balancer_arn]
+#
+# }
 
 #********************************Autoscaling policies for ecs *********************************************#
 module "backend_autoscaling" {
@@ -602,23 +602,23 @@ module "codebuild_prometheus" {
   service_role_arn = module.pipeline_role.role_arn
   task_definition_family = module.frontend_ecs_task_definition.taskDef_family
 }
-module "codebuild_prometheusUI" {
-  source = "./Infrastructure/Modules/CodeBuild"
-  aws_account_id = data.aws_caller_identity.current.account_id
-  backend_lb_url = module.prometheusUI_loadbalancer.load_balancer_dns
-  build_spec = var.build_spec
-  container_name = var.prometheus_container
-  dynamodb_table = ""
-  ecs_role = var.iam_for_cicd["ecs"]
-  ecs_task_role = module.role_for_ecs.ecs_task_role_name
-  folder_path = var.prometheus_folder_path
-  name = "codebuild-prometheusUI-${var.environment}"
-  region_aws = var.aws_region
-  repo_url = module.promethues_repo.ecr_repo_url
-  service_port = 8080
-  service_role_arn = module.pipeline_role.role_arn
-  task_definition_family = module.prometheusUI_TASK_definition.taskDef_family
-}
+# module "codebuild_prometheusUI" {
+#   source = "./Infrastructure/Modules/CodeBuild"
+#   aws_account_id = data.aws_caller_identity.current.account_id
+#   backend_lb_url = module.prometheusUI_loadbalancer.load_balancer_dns
+#   build_spec = var.build_spec
+#   container_name = var.prometheus_container
+#   dynamodb_table = ""
+#   ecs_role = var.iam_for_cicd["ecs"]
+#   ecs_task_role = module.role_for_ecs.ecs_task_role_name
+#   folder_path = var.prometheus_folder_path
+#   name = "codebuild-prometheusUI-${var.environment}"
+#   region_aws = var.aws_region
+#   repo_url = module.promethues_repo.ecr_repo_url
+#   service_port = 8080
+#   service_role_arn = module.pipeline_role.role_arn
+#   task_definition_family = module.prometheusUI_TASK_definition.taskDef_family
+# }
 
 
 ## codedeploy projects###
@@ -659,18 +659,18 @@ module "prometheus_codedeploy" {
   trigger_name       = var.trigger_name
 }
 
-module "prometheusUI_codedeploy" {
-  source = "./Infrastructure/Modules/CodeDeploy"
-  aws_lb_listener    = module.prometheusUI_loadbalancer.listener_arn
-  blue_target_group  = module.prometheus_ui_target_group.target_group_name
-  cluster_name       = module.cluster_ecs.name_of_cluster
-  green_target_group = module.prometheus_ui_target_group_g.target_group_name
-  name               = "promUI-codedeploy-${var.environment}"
-  service_name       = module.prometheus_UI-ecs_service.ecs_name
-  service_role_arn   = module.codedeploy_iam_role.codedeploy_arn
-  sns_topic_arn      = module.sns_topic.sns_arn
-  trigger_name       = var.trigger_name
-}
+# module "prometheusUI_codedeploy" {
+#   source = "./Infrastructure/Modules/CodeDeploy"
+#   aws_lb_listener    = module.prometheusUI_loadbalancer.listener_arn
+#   blue_target_group  = module.prometheus_ui_target_group.target_group_name
+#   cluster_name       = module.cluster_ecs.name_of_cluster
+#   green_target_group = module.prometheus_ui_target_group_g.target_group_name
+#   name               = "promUI-codedeploy-${var.environment}"
+#   service_name       = module.prometheus_UI-ecs_service.ecs_name
+#   service_role_arn   = module.codedeploy_iam_role.codedeploy_arn
+#   sns_topic_arn      = module.sns_topic.sns_arn
+#   trigger_name       = var.trigger_name
+# }
 
 
 
@@ -712,9 +712,9 @@ module "codepipeline" {
   PromprojectName = module.codebuild_prometheus.project_id
   PromappName = module.prometheus_codedeploy.app_name
   PromDeploymentGroup = module.prometheus_codedeploy.deployment_group_name
-  PromUIDeploymentGroup = module.prometheusUI_codedeploy.deployment_group_name
-  PromUIappName = module.prometheusUI_codedeploy.app_name
-  PromuiprojectName = module.codebuild_prometheusUI.project_id
+  # PromUIDeploymentGroup = module.prometheusUI_codedeploy.deployment_group_name
+  #  # PromUIappName = module.prometheusUI_codedeploy.app_name
+  #  # PromuiprojectName = module.codebuild_prometheusUI.project_id
 }
 # import {
 #   id = ""
@@ -747,14 +747,14 @@ module "prometheus_listener_rule" {
 }
 
 ###########exposing prometheus ui on port 9090#############
-module "prometheuis_ui_listener" {
-  source = "./Infrastructure/Modules/PrometheusUI Listener"
-  prometheus-loadbalancer = module.prometheusUI_loadbalancer.load_balancer_arn
-  prometheus-target-group-arn = module.prometheus_ui_target_group.target_group_arn
-}
-module "prometheus_ui_listener_rule" {
-  source = "./Infrastructure/Modules/PrometheusUI Loadbalancer"
-  listener_arn = module.prometheuis_ui_listener.prometheus_listener_arn
-  prometheus-target-group-arn = module.prometheus_ui_target_group.target_group_arn
-
-}
+# module "prometheuis_ui_listener" {
+#   source = "./Infrastructure/Modules/PrometheusUI Listener"
+#   prometheus-loadbalancer = module.prometheusUI_loadbalancer.load_balancer_arn
+#   prometheus-target-group-arn = module.prometheus_ui_target_group.target_group_arn
+# }
+# module "prometheus_ui_listener_rule" {
+#   source = "./Infrastructure/Modules/PrometheusUI Loadbalancer"
+#   listener_arn = module.prometheuis_ui_listener.prometheus_listener_arn
+#   prometheus-target-group-arn = module.prometheus_ui_target_group.target_group_arn
+#
+# }
