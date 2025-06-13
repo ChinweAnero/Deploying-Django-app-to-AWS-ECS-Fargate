@@ -115,6 +115,7 @@ module "server_target_group_blue" {
   healthcheck_port = var.server_port
   create_target_group = true
 
+
 }
 
 module "server_target_group_green" {
@@ -128,6 +129,7 @@ module "server_target_group_green" {
   healthcheck_port = var.server_port
   create_target_group = true
 
+
 }
 #*******************************target group for client environments**********************#
 module "target_group_client_blue" {
@@ -140,6 +142,7 @@ module "target_group_client_blue" {
   target_type = "ip"
   healthcheck_path = "/health/"
   healthcheck_port = var.server_port
+
 }
 module "target_group_client_green" {
   source = "./Infrastructure/Modules/LoadBalancer"
@@ -151,6 +154,7 @@ module "target_group_client_green" {
   target_type = "ip"
   healthcheck_path = "/health/"
   healthcheck_port = var.server_port
+
 }
 
 
@@ -169,6 +173,7 @@ module "prometheus_target_group_blue" {
   healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
 
+
 }
 
 # import {
@@ -186,6 +191,7 @@ module "prometheus_target_group_green" {
   healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
 
+
 }
 
 module "prometheus_ui_target_group" {
@@ -198,6 +204,7 @@ module "prometheus_ui_target_group" {
   protocol = "HTTP"
   healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
+
 
 }
 
@@ -212,6 +219,7 @@ module "prometheus_ui_target_group_g" {
   healthcheck_path = "/-/healthy"
   healthcheck_port = var.server_port
 
+
 }
 
 #****************************configuring load balancer for both client and server**************************#
@@ -224,6 +232,7 @@ module "App_load_balancer_server" {
   target_group_arn = module.server_target_group_blue.target_group_arn
 
   vpc_id = module.VPC.vpc_id
+
 }
 
 module "App_load_balancer_client" {
@@ -256,6 +265,7 @@ module "prometheusUI_loadbalancer" {
   subnets = [module.VPC.public_subnets[0], module.VPC.public_subnets[1]]
   sec_group = module.prometheusUI_security_group.security_group_id
   target_group_arn = module.prometheus_ui_target_group.target_group_arn
+
 
 }
 
