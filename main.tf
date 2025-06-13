@@ -723,19 +723,19 @@ module "parameter_store" {
 }
 
 ###########exposing port 8000 listerner for prometheus
-module "prometheus_port_listener" {
-  source = "./Infrastructure/Modules/Prometheus Listener"
-  prometheus-loadbalancer = module.prometheus_loadbalancer-b.load_balancer_arn
-  prometheus-target-group-arn = module.prometheus_target_group_blue.target_group_arn
-
-
-}
-module "prometheus_listener_rule" {
-  source = "./Infrastructure/Modules/Prometheus LoadBalancer"
-  listener_arn = module.prometheus_port_listener.prometheus_listener_arn
-  prometheus-target-group-arn = module.prometheus_target_group_blue.target_group_arn
-
-}
+# module "prometheus_port_listener" {
+#   source = "./Infrastructure/Modules/Prometheus Listener"
+#   prometheus-loadbalancer = module.prometheus_loadbalancer-b.load_balancer_arn
+#   prometheus-target-group-arn = module.prometheus_target_group_blue.target_group_arn
+#
+#
+# }
+# module "prometheus_listener_rule" {
+#   source = "./Infrastructure/Modules/Prometheus LoadBalancer"
+#   listener_arn = module.prometheus_port_listener.prometheus_listener_arn
+#   prometheus-target-group-arn = module.prometheus_target_group_blue.target_group_arn
+#
+# }
 
 ###########exposing prometheus ui on port 9090#############
 module "prometheuis_ui_listener" {
